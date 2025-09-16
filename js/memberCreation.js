@@ -33,7 +33,7 @@ $(web_addr).parent().parent().find("a").eq(0).toggleClass('active')
     
   $("#unamed").text(localStorage.getItem("ls_uname"))
 
-
+get_team_dropdown()
 
  
 
@@ -52,7 +52,7 @@ $('#user_photo_preview').click(function () {
    $('#user_photo_up').on('change',function ()
 {
  property =this.files[0];
- user_photo_addr = upload_user_photo(property,"user_photo","#user_photo_preview");
+
 shw_toast("File Selected","File Name : " + property.name + " | File Size : " + (property.size/1024).toFixed(2) + " KB","info");
   var reader = new FileReader();
   reader.onload = function (e) {
@@ -74,11 +74,104 @@ shw_toast("File Selected","File Name : " + property.name + " | File Size : " + (
 
   $(this).addClass('was-validated');
 
+  user_photo_addr = upload_user_photo(property,"user_photo","#user_photo_preview");
+});
+
+$("#team_select").on("change", function(event) {
+  event.preventDefault();
+  // your logic here
+
+  if($(this).val() != "")
+  {
+    $("#amount").prop("disabled", false);
+     $("#amount").focus()
+  }
+
+    
+});
+
+
+$("#amount").on("input", function(event) {
  
-});
+  // TODO: handle live input change
+var selected = $('#team_select option:selected');
+
+// Get its data attributes
+var icFactor   = selected.data('ic_factor');
+var dcFactor   = selected.data('dc_factor');
+var timePeriod = selected.data('time_period');
+var dc = parseFloat($(this).val()) * parseFloat(dcFactor)
+
+
+
+var interest_only = (parseFloat($(this).val()) + parseFloat(dc)) * icFactor 
+var total =  (parseFloat($(this).val()) + parseFloat(dc))  + interest_only
+var amount_week = total/timePeriod;
+console.log(total);
+
+
+
+$("#summary_table").find("tr").eq(0).find("td").eq(0).html($(this).val() +  "(" + total + ")")
+$("#summary_table").find("tr").eq(1).find("td").eq(0).html(timePeriod + " Weeks" + "(" + amount_week + ")")
+$("#summary_table").find("tr").eq(2).find("td").eq(0).html(dc)
+$("#summary_table").find("tr").eq(3).find("td").eq(0).html(parseFloat($(this).val()) - dc)
 
 });
 
+});
+
+
+  function get_team_dropdown()
+   {
+    
+   
+   $.ajax({
+     url: "php/get_team_dropdown.php",
+     type: "get", //send it through get method
+     data: {
+     
+     },
+     success: function (response) {
+   console.log(response);
+   
+   
+   if (response.trim() != "error") {
+
+    if (response.trim() != "0 result")
+    {
+   
+     var obj = JSON.parse(response);
+   var count =0 
+   
+   
+     obj.forEach(function (obj) {
+        count = count +1;
+$('#team_select').append("<option value='"+obj.id+"' data-ic_factor='"+obj.ic_factor+"' data-dc_factor='"+obj.dc_charge_calculation+"' data-time_period='"+obj.time_period+"'>"+obj.group_mem+"</option>")
+
+     });
+   
+    
+   }
+   else{
+   // $("#@id@") .append("<td colspan='0' scope='col'>No Data</td>");
+ 
+   }
+  }
+   
+  
+   
+   
+       
+     },
+     error: function (xhr) {
+         //Do Something to handle error
+     }
+   });
+   
+   
+   
+      
+   }
 
 
  function upload_user_photo(property,fname,preview)

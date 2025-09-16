@@ -173,24 +173,30 @@
 
             <div class="row g-3">
                 <div class="col-md-6 form-floating">
-                    <select class="form-select" name="teamid" id="teamid" >
-                        <option value="">Select Team</option>
-                    </select>
-                    <label for="teamid">Team Id</label>
-                    <input type="hidden" name="dc_charge_calculation" id="dc_charge_calculation">
-                    <input type="hidden" name="time_period" id="time_period">
+                   
+                   
+                    <div class="form-floating mb-3">
+                      <select class="form-select" id="team_select" required>
+                        <option selected disabled value="">Choose...</option>
+                     
+                      </select>
+                     <label for="team_select">Group</label>
+                       <div class="invalid-feedback">
+                          Kindly Select  Vaild
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-6 form-floating">
-                    <input type="text" class="form-control" name="amount" id="amount" placeholder="Enter Loan Amount">
+                    <input type="text" class="form-control" disabled name="amount" id="amount" placeholder="Enter Loan Amount">
                     <label for="amount">Loan Amount</label>
                 </div>
 
-                <div class="col-md-6 form-floating">
+                <!-- <div class="col-md-6 form-floating">
                     <input type="text" class="form-control" name="interest" id="interest" placeholder="Enter Loan Tnterest in %">
                     <label for="interest">Loan Interest in %</label>
-                </div>
+                </div> -->
 
-                <div class="col-md-6 d-flex align-items-start gap-3">
+                <!-- <div class="col-md-6 d-flex align-items-start gap-3">
                     <div class="flex-grow-1">
                         <input type="file" class="form-control" name="photo" id="photo" accept="image/*">
                     </div>
@@ -198,10 +204,43 @@
                         <img id="photoPreview" src="" alt="Preview" class="img-thumbnail"
                             style="width:100px;height:100px;object-fit:cover;">
                     </div>
-                </div>
+                </div> -->
 
- <div class="col-md-6 d-flex align-items-start gap-3">
-       <div class="card my-2" id="user_photo">
+           <div class="col-md-6">
+            <div class="table-responsive">
+            <table class="table caption-top table-bordered table-striped ">
+                <caption>Summary Table</caption>
+           
+              <tbody id="summary_table">
+                <tr>
+            <th scope="col">Loan Amount</th>
+                  <td></td>
+
+                            </tr>
+            <tr>
+<th scope="col">Total Weeks</th>
+<td>
+
+</td>
+            </tr>
+            <tr>
+<th scope="col">Document Charge</th>
+<td></td>
+            </tr>
+            <tr>
+ <th scope="col">Amount Pay Now</th>
+ <td></td>
+            </tr>
+              </tbody>
+            
+            
+            </table>
+            </div>
+           </div>
+
+
+ <div class="col-md-6 d-flex justify-content-between  ">
+       <div class="card ms-3" id="user_photo">
                     <div class="card-header text-bg-danger text-center">
                       <h6>User Photo</h6>
                           <div class="input-group visually-hidden">
@@ -217,10 +256,8 @@
                           <!-- <img id="user_photo_photo_preview" class="img-fluid"  style="width: 10rem;" src="images/admin.png" alt> -->
                       </div>
                   </div>
- </div>
-                
 
-                <div class="col-md-6 d-flex flex-column gap-2">
+  <div >
                     <div>
                         <input type="checkbox" name="verification" id="verification">
                         <label for="verification">Client Verification</label>
@@ -230,6 +267,10 @@
                         <label for="nominee_verification">Nominee Verification</label>
                     </div>
                 </div>
+ </div>
+                
+
+              
             </div>
 
             <div class="text-center mt-4">
@@ -286,7 +327,7 @@
 <!-- external js -->
 <script src="js/memberCreation.js" type="module"></script>
 <!-- <script src="js/menu.js" type="module"></script> -->
-<script src="js/get_all_id.js" type="module"></script>
+<!-- <script src="js/get_all_id.js" type="module"></script> -->
 
 </body>
 </html>
