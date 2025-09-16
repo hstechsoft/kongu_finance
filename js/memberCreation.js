@@ -4,6 +4,7 @@ var phone_id = urlParams.get('phone_id');
   var current_user_id =  localStorage.getItem("ls_uid") ;
 var current_user_name =  localStorage.getItem("ls_uname") ; 
  var physical_stock_array = [];
+  var property = "";
 $(document).ready(function(){
  
   
@@ -50,11 +51,30 @@ $('#user_photo_preview').click(function () {
    
    $('#user_photo_up').on('change',function ()
 {
-var property =this.files[0];
+ property =this.files[0];
+ user_photo_addr = upload_user_photo(property,"user_photo","#user_photo_preview");
+shw_toast("File Selected","File Name : " + property.name + " | File Size : " + (property.size/1024).toFixed(2) + " KB","info");
+  var reader = new FileReader();
+  reader.onload = function (e) {
+      $('#user_photo_preview').attr('src', e.target.result);
+  }
+  reader.readAsDataURL(this.files[0]);
+ 
 
+});
 
-user_photo_addr = upload_user_photo(property,"user_photo","#user_photo_preview"); 
+  $('#memberForm').on('submit', function (event) {
+  event.preventDefault();
 
+  if (!this.checkValidity()) {
+    event.stopPropagation();
+    $(this).addClass('was-validated');
+    return;
+  }
+
+  $(this).addClass('was-validated');
+
+ 
 });
 
 });
