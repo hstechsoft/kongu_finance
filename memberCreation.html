@@ -176,7 +176,7 @@
                    
                    
                     <div class="form-floating mb-3">
-                      <select class="form-select" id="team_select" required>
+                      <select class="form-select" id="team_select" >
                         <option selected disabled value="">Choose...</option>
                      
                       </select>
@@ -279,6 +279,8 @@
         </form>
     </div>
 
+
+
     <!-- View Members -->
     <section class="mt-5 px-5">
         <h4 class="mb-3">View User Details</h4>
@@ -286,13 +288,19 @@
             <table class="table table-bordered table-striped align-middle">
                 <thead class="table-light">
                     <tr>
+                     
                         <th>Name</th>
                         <th>Phone Number</th>
+                          <th>Aadhar</th>
                         <th>Loan Amount</th>
+                         <th>photo</th>
+                         <th>Location</th>
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
-                <tbody id="membersTable"></tbody>
+                <tbody id="membersTable">
+                  
+                </tbody>
             </table>
         </div>
     </section>
@@ -303,8 +311,15 @@
         </div>
     </footer>
 </div>
+<td>
+<a href='https://maps.app.goo.gl/8t6jARG9R1wcPLAx8' target='_blank' rel='noopener'>
+    <button type='button' class='btn btn-outline-primary border-0' >
+        <i class='fa-solid fa-location-dot'></i>
+    </button>
+</a>
+</td>
 
-   
+
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -327,7 +342,7 @@
 <!-- external js -->
 <script src="js/memberCreation.js" type="module"></script>
 <!-- <script src="js/menu.js" type="module"></script> -->
-<!-- <script src="js/get_all_id.js" type="module"></script> -->
+<script src="js/get_all_id.js" type="module"></script>
 
 </body>
 </html>

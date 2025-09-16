@@ -15,6 +15,7 @@ return $data;
 
 
  $sql = "SELECT
+ 'leader' as leader_sts,
     gfc.time_period,
         gfc.ic_factor,
         gfc.dc_charge_calculation,
@@ -33,7 +34,8 @@ WHERE
     members.leader = 1
 
 UNION ALL
-SELECT  
+SELECT 
+ 'no-leader' as leader_sts, 
    gfc.time_period,
         gfc.ic_factor,
         gfc.dc_charge_calculation,

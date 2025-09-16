@@ -49,9 +49,21 @@ $sql =  "INSERT INTO members (user_name,phone,phone2,aadhar,city,district,pincod
 
  if ($conn->query($sql) === TRUE) {
   $last_id = $conn->insert_id;
+$photo_url =  "images/group/". $teamid . "/".$last_id . "." . $file_ext;
+   $sql_update =  "UPDATE  members  SET photo  =  '$photo_url'  WHERE id =  $last_id ";
+
+  if ($conn->query($sql_update) === TRUE) {
+   echo "ok";
   } else {
     echo "Error: " . $sql . "<br>" . $conn->error;
   }
+
+
+  } else {
+    echo "Error: " . $sql . "<br>" . $conn->error;
+  }
+
+
 
 
     
@@ -97,12 +109,12 @@ if($_FILES['file']['name'] != ''){
 
         // Add text to the image
         $date = new DateTime('now', new DateTimeZone('Asia/Kolkata'));
-        $text = $date->format('d-m-Y H:i:s')."("."h". ")";
+        $text = $date->format('d-m-Y H:i:s')."(".  $user_name. ")";
         $font = realpath(__DIR__ . '/arial.ttf'); // Ensure this path points to a valid TTF font file on your server
         if ($font === false) {
             die("Font file not found!");
         }
-        $font_size = 20;
+        $font_size = 15;
         $text_color = imagecolorallocate($dst, 255, 255, 255); // White color
         $x_position = 10;
         $y_position = $new_height - 10;
@@ -147,7 +159,7 @@ if($_FILES['file']['name'] != ''){
         imagedestroy($src);
     }
 
-    echo $target_path;
+
 
         
 }

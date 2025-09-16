@@ -5,6 +5,9 @@ var phone_id = urlParams.get('phone_id');
 var current_user_name =  localStorage.getItem("ls_uname") ; 
  var physical_stock_array = [];
   var property = "";
+  var interest = 0
+  var dc_amount = 0
+  var total_amount = 0
 $(document).ready(function(){
  
   
@@ -35,7 +38,7 @@ $(web_addr).parent().parent().find("a").eq(0).toggleClass('active')
 
 get_team_dropdown()
 
- 
+ get_members()
 
     // Show/hide nominee address fields
     $('#different_address').on('change', function () {
@@ -74,7 +77,7 @@ shw_toast("File Selected","File Name : " + property.name + " | File Size : " + (
 
   $(this).addClass('was-validated');
 
-  user_photo_addr = upload_user_photo(property,"user_photo","#user_photo_preview");
+ upload_user_photo(property,"user_photo","#user_photo_preview");
 });
 
 $("#team_select").on("change", function(event) {
@@ -104,10 +107,10 @@ var dc = parseFloat($(this).val()) * parseFloat(dcFactor)
 
 
 
-var interest_only = (parseFloat($(this).val()) + parseFloat(dc)) * icFactor 
-var total =  (parseFloat($(this).val()) + parseFloat(dc))  + interest_only
+var interest_only = (parseFloat($(this).val()) ) * icFactor 
+var total =  (parseFloat($(this).val()) )  + interest_only
 var amount_week = total/timePeriod;
-console.log(total);
+
 
 
 
@@ -116,10 +119,129 @@ $("#summary_table").find("tr").eq(1).find("td").eq(0).html(timePeriod + " Weeks"
 $("#summary_table").find("tr").eq(2).find("td").eq(0).html(dc)
 $("#summary_table").find("tr").eq(3).find("td").eq(0).html(parseFloat($(this).val()) - dc)
 
+interest = interest_only
+dc_amount =  dc
+total_amount = total
+});
+
+$("#leader").on("change", function(event) {
+  event.preventDefault();
+
+  if($("#leader").prop("checked") == true)
+  {
+    $("#team_select option").each(function() {
+      if($(this).data("leader") == "leader")
+      {
+        $(this).prop("disabled",true)
+      }
+      else
+      {
+         $(this).prop("disabled",false)
+      }
+     
+    });
+  }
+
+  
+  if($("#leader").prop("checked") == false)
+  {
+    $("#team_select option").each(function() {
+     
+        $(this).prop("disabled",false)
+    });
+  }
+  // your logic here
+});
+
+$("#membersTable").on("click", "tr td button", function(event) {
+  event.preventDefault();
+  // your logic here
+if($(this).hasClass("hide_btn"))
+{
+ console.log($(this).data("gid"));
+
+  var hide_element = $("."+$(this).data("gid"))
+
+  hide_element.toggleClass("d-none")
+
+  console.log(hide_element.hasClass("d-none"));
+// element is shown
+if(hide_element.hasClass("d-none")==false)
+{
+ $(this).find("i").removeClass("fa-angle-down");
+   $(this).find("i").addClass("fa-angle-up");
+}
+else
+{
+  $(this).find("i").removeClass("fa-angle-up");
+   $(this).find("i").addClass("fa-angle-down");
+}
+}
+ 
+
+else{
+  window.open($(this).closest("a").attr("href"), '_blank');
+  
+}
+  
 });
 
 });
 
+
+ function get_members()
+   {
+    
+   
+   $.ajax({
+     url: "php/get_members.php",
+     type: "get", //send it through get method
+     data: {
+     
+     },
+     success: function (response) {
+   
+   console.log(response);
+   
+   if (response.trim() != "error") {
+
+    if (response.trim() != "0 result")
+    {
+   
+     var obj = JSON.parse(response);
+   var count =0 
+   
+   
+     obj.forEach(function (obj) {
+        count = count +1;
+// $('#membersTable').append("<tr><td>"+count+"</td><td>"+obj.user_name+"</td><td>"+obj.phone+"</td> <td>"+obj.totalAmount+"</td><td> <div style='width: 90px; height : 90px; overflow: hidden;'> <img src='"+obj.photo+"' class='img-fluid img-thumbnail' style='height: 100%; width: 100%; object-fit:contain ;' alt=''> </div></td><td><button type='button' class='btn btn-outline-primary btn-sm edit border-0' value = '"+obj.id+"'><i class='fa fa-pencil' aria-hidden='true'></i></button> <button  value = '"+obj.id+"' type='button' class='btn btn-outline-danger btn-sm delete border-0' id=''><i class='fa-solid fa-trash'></i></button></td></tr>")
+
+
+$('#membersTable').append("<tr><td colspan = '7'> <div class = 'd-flex justify-content-between'><p class='p-0 m-0'>"+ obj.group_mem + "</p><p class='p-0 m-0'> (Total - " +obj.total_members +  ")  <span class = 'fw-bold ms-4'>("+obj.g_total+")</span> </p><button type='button' class='btn btn-outline-success border-0 btn-sm hide_btn' data-gid='"+obj.gid+"' ><i class='fa fa-angle-down' aria-hidden='true'></i></button> </td></tr> "+ obj.mem)
+     });
+   
+    
+   }
+   else{
+   // $("#@id@") .append("<td colspan='3' scope='col'>No Data</td>");
+ 
+   }
+  }
+   
+  
+   
+   
+       
+     },
+     error: function (xhr) {
+         //Do Something to handle error
+     }
+   });
+   
+   
+   
+      
+   }
 
   function get_team_dropdown()
    {
@@ -146,7 +268,7 @@ $("#summary_table").find("tr").eq(3).find("td").eq(0).html(parseFloat($(this).va
    
      obj.forEach(function (obj) {
         count = count +1;
-$('#team_select').append("<option value='"+obj.id+"' data-ic_factor='"+obj.ic_factor+"' data-dc_factor='"+obj.dc_charge_calculation+"' data-time_period='"+obj.time_period+"'>"+obj.group_mem+"</option>")
+$('#team_select').append("<option value='"+obj.id+"' data-ic_factor='"+obj.ic_factor+"' data-dc_factor='"+obj.dc_charge_calculation+"' data-time_period='"+obj.time_period+"' data-leader='"+obj.leader_sts+"'>"+obj.group_mem+"</option>")
 
      });
    
@@ -218,16 +340,19 @@ if($("#different_address").prop("checked") == true)
     form_data.append("location_url",$("#location_url").val());
     form_data.append("nominee_pincode",$("#nominee_pincode").val());
     form_data.append("nominee_location_url",$("#nominee_location_url").val());
-    form_data.append("team_id",$("#team_id").val());
+    form_data.append("team_id",$("#team_select").val());
     form_data.append("amount",$("#amount").val());
-    form_data.append("interest",$("#interest").val());
+ 
     form_data.append("verification",$("#verification").val());
     form_data.append("nominee_verification",$("#nominee_verification").val());
-    form_data.append("leader",$("#leader").val());
-   form_data.append("dc_amount","0");
+    if($("#leader").prop("checked") == true)
+    form_data.append("leader","1");
+  else
+     form_data.append("leader","0");
+   form_data.append("dc_amount",dc_amount);
        form_data.append("after_dc_factor_amount","0");
-         form_data.append("interest","0");
-         form_data.append("totalAmount","0");
+         form_data.append("interest",interest);
+         form_data.append("totalAmount",total_amount);
            form_data.append("pending_amount","0");
        // Show the overlay and reset progress bar
       
@@ -247,20 +372,23 @@ if($("#different_address").prop("checked") == true)
            
             success:function(data){
             
-           
+           if(data.trim() == "ok")
+           {
+            location.reload()
+           }
              console.log(data);
-             // $('#msg').html(data);
-             var timestamp = new Date().getTime(); // Get current timestamp
+            //  // $('#msg').html(data);
+            //  var timestamp = new Date().getTime(); // Get current timestamp
             
-             $(preview).attr("src", "attachment/delivery/" + did + "/" + $("#chasis_no").val() + "." + file_extension + "?" + timestamp);
-             $("#dsubmit").show()
+            //  $(preview).attr("src", "attachment/delivery/" + did + "/" + $("#chasis_no").val() + "." + file_extension + "?" + timestamp);
+            //  $("#dsubmit").show()
          
           
             }
           });
         
     }
-  return  "attachment/delivery/"+ did + "/" + $("#chasis_no").val() + "." + file_extension
+  
   }
 
 
