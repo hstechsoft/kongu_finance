@@ -177,8 +177,14 @@ else
    $(this).find("i").addClass("fa-angle-down");
 }
 }
- 
 
+
+else if($(this).hasClass("edit"))
+{
+ var member_id = $(this).val();
+get_members_single(member_id)
+ 
+}
 else{
   window.open($(this).closest("a").attr("href"), '_blank');
   
@@ -187,6 +193,90 @@ else{
 });
 
 });
+
+function get_members_single(member_id)
+{
+ 
+
+$.ajax({
+  url: "php/get_members_single.php",
+  type: "get", //send it through get method
+  data: {
+  id : member_id
+
+  },
+  success: function (response) {
+console.log(response);
+
+
+if (response.trim() != "error") {
+
+ if (response.trim() != "0 result")
+ {
+property = ""
+  var obj = JSON.parse(response);
+var count =0 
+
+
+  $('#different_address').prop('checked', true).trigger('change');
+obj.forEach(function (obj) {
+
+     count = count +1;
+$('#user_name').val(obj.user_name)
+$('#phone').val(obj.phone)
+$('#phone2').val(obj.phone2)
+$('#aadhar').val(obj.aadhar)
+$('#city').val(obj.city)
+$('#district').val(obj.district)
+$('#pincode').val(obj.pincode)
+$('#location_url').val(obj.location_url)
+$('#leader').val(obj.leader)
+$('#nominee_name').val(obj.nominee_name)
+$('#nominee_phone').val(obj.nominee_phone)
+$('#nominee_phone2').val(obj.nominee_phone2)
+$('#nominee_aadhar').val(obj.nominee_aadhar)
+$('#nominee_relationship').val(obj.nominee_relationship)
+$('#nominee_city').val(obj.nominee_city)
+$('#nominee_district').val(obj.nominee_district)
+$('#nominee_pincode').val(obj.nominee_pincode)
+$('#nominee_location_url').val(obj.nominee_location_url)
+$('#team_select').val(obj.teamid).trigger('change');
+$('#amount').val(obj.amount).trigger('input');
+$('#dc_amount').val(obj.dc_amount)
+$('#after_dc_factor_amount').val(obj.after_dc_factor_amount)
+$('#interest').val(obj.interest)
+$('#totalAmount').val(obj.totalAmount)
+$('#photo').val(obj.photo)
+$('#verification').val(obj.verification)
+$('#nominee_verification').val(obj.nominee_verification)
+$('#created_at').val(obj.created_at)
+$('#pending_amount').val(obj.pending_amount)
+$("#user_photo_preview").attr("src",obj.photo)
+  });
+console.log(property);
+
+ 
+}
+else{
+// $("#@id@") .append("<td colspan='0' scope='col'>No Data</td>");
+
+}
+}
+
+
+
+
+    
+  },
+  error: function (xhr) {
+      //Do Something to handle error
+  }
+});
+
+
+
+   
+}
 
 
  function get_members()
