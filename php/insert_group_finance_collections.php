@@ -15,6 +15,7 @@ $dc_charge_calculation = test_input($_GET['dc_charge_calculation']);
 $ic_amount = test_input($_GET['ic_amount']);
 $ic_interest = test_input($_GET['ic_interest']);
 $ic_factor = test_input($_GET['ic_factor']);
+$start_date = test_input($_GET['start_date']);
 
 
  
@@ -27,7 +28,7 @@ $data = "'".$data."'";
 return $data;
 }
 $sql = "SET time_zone = '+05:30';";
-$sql .= "INSERT INTO group_finance_collections ( group_number,employee_id,collection_day,assemble_location,group_phone,time_period,group_location_url,dc_amount,dc_charge,dc_charge_calculation,ic_amount,ic_interest,ic_factor) VALUES ($group_number,$employee_id,$collection_day,$assemble_location,$group_phone,$time_period,$group_location_url,$dc_amount,$dc_charge,$dc_charge_calculation,$ic_amount,$ic_interest,$ic_factor);";
+$sql .= "INSERT INTO group_finance_collections ( group_number,employee_id,collection_day,assemble_location,group_phone,time_period,group_location_url,dc_amount,dc_charge,dc_charge_calculation,ic_amount,ic_interest,ic_factor,start_date) VALUES ($group_number,$employee_id,$collection_day,$assemble_location,$group_phone,$time_period,$group_location_url,$dc_amount,$dc_charge,$dc_charge_calculation,$ic_amount,$ic_interest,$ic_factor,$start_date);";
 
 if ($conn->multi_query($sql)) {
     do {

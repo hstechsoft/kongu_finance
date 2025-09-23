@@ -170,7 +170,8 @@ dc_charge_calculation : parseFloat(dc_charge_calculation),
 ic_amount :  parseFloat($('#ic_amount').val()),
 ic_interest :  parseFloat($('#ic_interest').val()),
 ic_factor : parseFloat(ic_factor),
-id :group_id1
+id :group_id1,
+start_date : $('#start_date').val()
 
      },
      success: function (response) {
@@ -240,6 +241,7 @@ group_id1 = obj.id;
 mode = "update"
 $("#group_submit_btn").addClass("d-none");
 $("#group_update_btn").removeClass("d-none");
+$('#start_date').val(obj.start_date)
      });
    
     
@@ -290,7 +292,7 @@ $("#group_update_btn").removeClass("d-none");
    
      obj.forEach(function (obj) {
         count = count +1;
-$('#groupTable').append("<tr><td>"+count+"</td><td>"+obj.group_number+"</td><td>"+obj.employee_name+"</td><td>"+obj.collection_day+"</td><td><button type='button' class='btn btn-outline-primary btn-sm edit border-0' value = '"+obj.id+"'><i class='fa fa-pencil' aria-hidden='true'></i></button> <button  value = '"+obj.id+"' type='button' class='btn btn-outline-danger btn-sm delete border-0' id=''><i class='fa-solid fa-trash'></i></button></td></tr>")
+$('#groupTable').append("<tr><td>"+count+"</td><td>"+obj.group_number+"</td><td>"+obj.employee_name+"</td><td>"+obj.collection_day + " ("+obj.start_date_f+ ")"+ "</td><td><button type='button' class='btn btn-outline-primary btn-sm edit border-0' value = '"+obj.id+"'><i class='fa fa-pencil' aria-hidden='true'></i></button> <button  value = '"+obj.id+"' type='button' class='btn btn-outline-danger btn-sm delete border-0' id=''><i class='fa-solid fa-trash'></i></button></td></tr>")
 
      });
    
@@ -339,7 +341,8 @@ dc_charge_calculation : dc_charge_calculation,
 
 ic_amount :  $('#ic_amount').val(),
 ic_interest :  $('#ic_interest').val(),
-ic_factor : ic_factor
+ic_factor : ic_factor,
+start_date : $('#start_date').val()
 
      },
      success: function (response) {

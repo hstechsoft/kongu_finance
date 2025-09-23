@@ -8,6 +8,7 @@ var current_user_name =  localStorage.getItem("ls_uname") ;
   var interest = 0
   var dc_amount = 0
   var total_amount = 0
+  var memberid = 0
 $(document).ready(function(){
  
   
@@ -77,7 +78,51 @@ shw_toast("File Selected","File Name : " + property.name + " | File Size : " + (
 
   $(this).addClass('was-validated');
 
- upload_user_photo(property,"user_photo","#user_photo_preview");
+  if($("#team_select").val() == "")
+  {
+    shw_toast("Error","Please select Team","error");
+    return;
+  }
+  if($("#amount").val() == "" || parseFloat($("#amount").val()) <= 0)
+  {
+    shw_toast("Error","Please enter valid Amount","error");
+    return;
+  } 
+  if(property == "")
+  {
+    if($("#submit_btn").hasClass("d-none") == false)
+    {
+   shw_toast("Error","Please select Photo","error");
+    return;
+    }
+    
+
+ 
+  }
+  if($("#user_name").val().trim() == "")
+  {
+    shw_toast("Error","Please enter Name","error");
+    return;
+  }
+
+  if($("#start_date").val().trim() == "" )
+  {
+    shw_toast("Error","Please select Start Date","error");
+    return;
+  }
+
+  if ($("#submit_btn").hasClass("d-none") == false) {
+    upload_user_photo(property, "user_photo", "#user_photo_preview");
+  } else {
+    if (property != "") {
+      console.log(memberid);
+      
+       update_photo(property,memberid);
+    } else {
+      // No photo selected, do nothing or show a message if needed
+      update_user_info("",memberid)
+    }
+  }
 });
 
 $("#team_select").on("change", function(event) {
@@ -86,12 +131,17 @@ $("#team_select").on("change", function(event) {
 
   if($(this).val() != "")
   {
+
+     $("#start_date").val("2025-02-12");
     $("#amount").prop("disabled", false);
      $("#amount").focus()
+    // Dynamically set the start date input based on selected team's start_date
+   
   }
 
     
 });
+
 
 
 $("#amount").on("input", function(event) {
@@ -185,14 +235,220 @@ else if($(this).hasClass("edit"))
 get_members_single(member_id)
  
 }
-else{
-  window.open($(this).closest("a").attr("href"), '_blank');
+
+else if($(this).hasClass("delete"))
+{
+  var member_id = $(this).val();
+  var memberid1 = $(this).val()
   
+    {
+    swal({
+      title: "Are you sure - Delete? ",
+      text: "You will not be recover this  again!",
+      icon: "warning",
+      buttons: [
+        'No, cancel it!',
+        'Yes, I am sure!'
+      ],
+      dangerMode: true,
+    }).then(function(isConfirm) {
+      if (isConfirm) {
+        swal({
+          title: 'Applied!',
+          text: 'successfully Deleted!',
+          icon: 'success'
+        }).then(function() {
+  
+          delete_members(memberid1) // <--- submit form programmatically
+  
+  
+        });
+      } else {
+        swal("Cancelled", "This is safe :)", "error");
+      }
+    })
+    }
 }
+
   
 });
 
 });
+
+
+  function delete_members(memberid1)
+   {
+    
+   
+   $.ajax({
+     url: "php/delete_members.php",
+     type: "get", //send it through get method
+     data: {
+     id : memberid1
+
+     },
+     success: function (response) {
+   
+   
+   if (response.trim() == "ok") {
+
+ location.reload()
+   
+  }
+   
+  
+   
+   
+       
+     },
+     error: function (xhr) {
+         //Do Something to handle error
+     }
+   });
+   
+   
+   
+      
+   }
+
+
+
+
+ function update_user_info(path, memberid)
+  {
+
+     var is_addr_differ = 0
+var leader = 0
+
+if($("#leader").prop("checked") == true) 
+{
+    leader = 1
+}
+if($("#different_address").prop("checked") == true) 
+{
+    is_addr_differ = 1
+}
+
+     
+      var emi = total_amount /  parseFloat($('#team_select option:selected').data('time_period'))
+      var time_period = parseFloat($('#team_select option:selected').data('time_period'))
+
+
+   
+   $.ajax({
+     url: "php/update_members.php",
+     type: "get", //send it through get method
+ 
+    
+
+       data: {
+     user_name :  $('#user_name').val(),
+phone :  $('#phone').val(),
+phone2 :  $('#phone2').val(),
+aadhar :  $('#aadhar').val(),
+city :  $('#city').val(),
+district :  $('#district').val(),
+pincode :  $('#pincode').val(),
+location_url :  $('#location_url').val(),
+leader : leader,
+nominee_name :  $('#nominee_name').val(),
+nominee_phone :  $('#nominee_phone').val(),
+nominee_phone2 :  $('#nominee_phone2').val(),
+nominee_aadhar :  $('#nominee_aadhar').val(),
+nominee_relationship :  $('#nominee_relationship').val(),
+nominee_city :  $('#nominee_city').val(),
+nominee_district :  $('#nominee_district').val(),
+nominee_pincode :  $('#nominee_pincode').val(),
+nominee_location_url :  $('#nominee_location_url').val(),
+teamid :  $('#team_select').val(),
+amount :  $('#amount').val(),
+dc_amount : dc_amount,
+after_dc_factor_amount : 0,
+interest : interest,
+totalAmount : total_amount,
+photo : path,
+verification :  $('#verification').val(),
+nominee_verification :  $('#nominee_verification').val(),
+pending_amount : 0,
+is_addr_differ : is_addr_differ,
+start_date :  $('#start_date').val(),
+id : memberid,
+emi : emi,
+time_period : time_period,
+
+
+     },
+     success: function (response) {
+   
+   console.log(response);
+   
+   
+           if(response.trim() == "ok")
+           {
+            location.reload()
+           }
+  
+   
+   
+       
+     },
+     error: function (xhr) {
+         //Do Something to handle error
+     }
+   });
+   
+   
+
+  }
+
+
+function update_photo(property,memberid)
+{
+  if (!property) {
+    return; // No file selected
+}
+  var file_name = property.name;
+  var file_extension = file_name.split('.').pop().toLowerCase();
+{
+ var form_data = new FormData();
+ form_data.append("file",property);
+ form_data.append("team_id",$("#team_select").val());
+ form_data.append("member_id",  memberid);
+  form_data.append("file_ext",file_extension);
+   
+     // Show the overlay and reset progress bar
+    
+ 
+      $.ajax({
+          url:'update_user_photo.php',
+          method:'POST',
+          data:form_data,
+          contentType:false,
+          cache:false,
+          processData:false,
+          beforeSend:function(){
+          //  $('#msg').html('Loading......');
+          console.log('Loading......');
+         
+          },
+         
+          success:function(data){
+          
+         console.log(data);
+         
+         var path_d = "images/group/"+$("#team_select").val() + "/"+  memberid + "." + file_extension
+         update_user_info(path_d,memberid);
+         
+        
+          }
+        });
+      
+  }
+
+
+}
+
+
 
 function get_members_single(member_id)
 {
@@ -213,14 +469,26 @@ if (response.trim() != "error") {
 
  if (response.trim() != "0 result")
  {
+$("#submit_btn").addClass("d-none")
+$("#update_btn").removeClass("d-none")
+
 property = ""
   var obj = JSON.parse(response);
 var count =0 
 
 
-  $('#different_address').prop('checked', true).trigger('change');
+  memberid = member_id
+  // $('#different_address').prop('checked', true).trigger('change');
 obj.forEach(function (obj) {
 
+if(obj.is_addr_differ == "1")
+{
+  $('#different_address').prop('checked', true).trigger('change');
+}
+else
+{
+  $('#different_address').prop('checked', false).trigger('change');
+}
      count = count +1;
 $('#user_name').val(obj.user_name)
 $('#phone').val(obj.phone)
@@ -230,7 +498,16 @@ $('#city').val(obj.city)
 $('#district').val(obj.district)
 $('#pincode').val(obj.pincode)
 $('#location_url').val(obj.location_url)
-$('#leader').val(obj.leader)
+if(obj.leader == "1")
+{
+  $('#leader').prop('checked', true).trigger('change');
+}
+else
+{
+  $('#leader').prop('checked', false).trigger('change');
+} 
+  
+
 $('#nominee_name').val(obj.nominee_name)
 $('#nominee_phone').val(obj.nominee_phone)
 $('#nominee_phone2').val(obj.nominee_phone2)
@@ -252,8 +529,9 @@ $('#nominee_verification').val(obj.nominee_verification)
 $('#created_at').val(obj.created_at)
 $('#pending_amount').val(obj.pending_amount)
 $("#user_photo_preview").attr("src",obj.photo)
+$("#start_date").val(obj.start_date)
   });
-console.log(property);
+
 
  
 }
@@ -358,7 +636,7 @@ $('#membersTable').append("<tr><td colspan = '7'> <div class = 'd-flex justify-c
    
      obj.forEach(function (obj) {
         count = count +1;
-$('#team_select').append("<option value='"+obj.id+"' data-ic_factor='"+obj.ic_factor+"' data-dc_factor='"+obj.dc_charge_calculation+"' data-time_period='"+obj.time_period+"' data-leader='"+obj.leader_sts+"'>"+obj.group_mem+"</option>")
+$('#team_select').append("<option value='"+obj.id+"' data-ic_factor='"+obj.ic_factor+"' data-dc_factor='"+obj.dc_charge_calculation+"' data-time_period='"+obj.time_period+"' data-leader='"+obj.leader_sts+"'data-start_date='"+ obj.start_date+"'>"+obj.group_mem+"</option>")
 
      });
    
@@ -396,7 +674,7 @@ $('#team_select').append("<option value='"+obj.id+"' data-ic_factor='"+obj.ic_fa
   {
    var form_data = new FormData();
    form_data.append("file",property);
-var different_address = "no"
+    var is_addr_differ = 0
 var leader = "no"
 
 if($("#leader").prop("checked") == true) 
@@ -405,8 +683,9 @@ if($("#leader").prop("checked") == true)
 }
 if($("#different_address").prop("checked") == true) 
 {
-    different_address = "yes"
+    is_addr_differ = 1
 }
+
 
    form_data.append("file_name", + "demo" + file_extension);
    form_data.append("file_name","demo" + "." + file_extension);
@@ -432,21 +711,27 @@ if($("#different_address").prop("checked") == true)
     form_data.append("nominee_location_url",$("#nominee_location_url").val());
     form_data.append("team_id",$("#team_select").val());
     form_data.append("amount",$("#amount").val());
- 
+  form_data.append("start_date",$("#start_date").val());
+    form_data.append("is_addr_differ",is_addr_differ);
     form_data.append("verification",$("#verification").val());
     form_data.append("nominee_verification",$("#nominee_verification").val());
+     
+       var emi = total_amount /  parseFloat($('#team_select option:selected').data('time_period'))
+      var time_period = parseFloat($('#team_select option:selected').data('time_period'))
+  form_data.append("emi",emi);
+  form_data.append("time_period",time_period);
     if($("#leader").prop("checked") == true)
     form_data.append("leader","1");
   else
      form_data.append("leader","0");
-   form_data.append("dc_amount",dc_amount);
+   form_data.append("dc_amount",team_select);
        form_data.append("after_dc_factor_amount","0");
          form_data.append("interest",interest);
          form_data.append("totalAmount",total_amount);
            form_data.append("pending_amount","0");
        // Show the overlay and reset progress bar
-      
-   
+          form_data.append("start_date",$('#start_date').val());
+
         $.ajax({
             url:'upload_user_photo.php',
             method:'POST',

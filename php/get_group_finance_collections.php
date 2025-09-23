@@ -14,7 +14,7 @@ return $data;
 }
 
 
- $sql = "SELECT gfc.*,employees.employee_name FROM group_finance_collections gfc inner join employees on gfc.employee_id = employees.id ";
+ $sql = "SELECT gfc.*,employees.employee_name,date_only(gfc.start_date) as start_date_f FROM group_finance_collections gfc inner join employees on gfc.employee_id = employees.id ";
 
 $result = $conn->query($sql);
 

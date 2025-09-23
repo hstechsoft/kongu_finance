@@ -172,7 +172,7 @@
             <hr>
 
             <div class="row g-3">
-                <div class="col-md-6 form-floating">
+                <div class="col-md-4 form-floating">
                    
                    
                     <div class="form-floating mb-3">
@@ -186,9 +186,22 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 form-floating">
+                <div class="col-md-4 form-floating">
                     <input type="text" class="form-control" disabled name="amount" id="amount" placeholder="Enter Loan Amount">
                     <label for="amount">Loan Amount</label>
+                </div>
+
+                   <div class="col-md-4 form-floating">
+                    <div class="form-floating mb-2">
+                  <input type="date" class="form-control rounded-3" id="start_date" placeholder="" >
+                  <label for="start_date">Start Date
+                  </label>
+                
+                  <div class="invalid-feedback">
+                    Kindly Enter  Vaild Data
+                  </div>
+                </div>
+             
                 </div>
 
                 <!-- <div class="col-md-6 form-floating">
@@ -274,7 +287,8 @@
             </div>
 
             <div class="text-center mt-4">
-                <button type="submit" class="btn btn-primary btn-submit">Submit</button>
+                <button type="submit" class="btn btn-primary" id="submit_btn">Submit</button>
+                  <button type="submit" class="btn btn-primary  d-none" id="update_btn">update</button>
             </div>
         </form>
     </div>
@@ -342,7 +356,7 @@
 <!-- external js -->
 <script src="js/memberCreation.js" type="module"></script>
 <!-- <script src="js/menu.js" type="module"></script> -->
-<script src="js/get_all_id.js" type="module"></script>
+<!-- <script src="js/get_all_id.js" type="module"></script> -->
 
 </body>
 </html>

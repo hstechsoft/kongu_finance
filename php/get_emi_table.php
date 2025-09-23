@@ -3,6 +3,7 @@
 
  $team_id = test_input($_GET['team_id']);
 
+ $mem_query = ($_GET['mem_query']);
 
  
  
@@ -39,7 +40,7 @@ pay_sum AS(
                 CURRENT_DATE()) < 7,
                 1,
                 0
-            ) and fp.group_id =  $team_id 
+            ) and fp.group_id =  $team_id and $mem_query
         GROUP BY
             member_id
         ORDER BY
@@ -48,6 +49,7 @@ pay_sum AS(
     SELECT
         pay_sum.member_id,
         (select members.user_name from members where members.id =  pay_sum.member_id) as member,
+         (select members.photo from members where members.id =  pay_sum.member_id) as photo,
         ifnull(fp_sum.total_paid,0) as total_paid,
         ifnull(pay_sum.total_pay_amount,0) as total_pay_amount ,
         date_only(pay_sum.collection_date) as collection_date,

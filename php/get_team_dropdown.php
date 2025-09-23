@@ -16,6 +16,7 @@ return $data;
 
  $sql = "SELECT
  'leader' as leader_sts,
+ gfc.start_date,
     gfc.time_period,
         gfc.ic_factor,
         gfc.dc_charge_calculation,
@@ -36,6 +37,7 @@ WHERE
 UNION ALL
 SELECT 
  'no-leader' as leader_sts, 
+  gfc.start_date,
    gfc.time_period,
         gfc.ic_factor,
         gfc.dc_charge_calculation,

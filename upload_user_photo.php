@@ -34,6 +34,10 @@
                 $interest = $_POST['interest'];
                     $totalAmount = $_POST['totalAmount'];
            $pending_amount = $_POST['pending_amount'];
+             $start_date = $_POST['start_date'];
+                  $is_addr_differ = $_POST['is_addr_differ'];
+                  $emi = $_POST['emi']; 
+                    $time_period = $_POST['time_period'];
   $last_id  = 0;
   
 
@@ -45,7 +49,7 @@ $nominee_city = $city;
    $nominee_location_url = $location_url;
         }
 
-$sql =  "INSERT INTO members (user_name,phone,phone2,aadhar,city,district,pincode,location_url,leader,nominee_name,nominee_phone,nominee_phone2,nominee_aadhar,nominee_relationship,nominee_city,nominee_district,nominee_pincode,nominee_location_url,teamid,amount,dc_amount,after_dc_factor_amount,interest,totalAmount,photo,verification,nominee_verification,pending_amount) VALUES ('$user_name','$phone','$phone2','$aadhar','$city','$district','$pincode','$location_url','$leader','$nominee_name','$nominee_phone','$nominee_phone2','$nominee_aadhar','$nominee_relationship','$nominee_city','$nominee_district','$nominee_pincode','$nominee_location_url','$teamid','$amount','$dc_amount','$after_dc_factor_amount','$interest','$totalAmount','photo','$verification','$nominee_verification','$pending_amount')";
+$sql =  "INSERT INTO members (user_name,phone,phone2,aadhar,city,district,pincode,location_url,leader,nominee_name,nominee_phone,nominee_phone2,nominee_aadhar,nominee_relationship,nominee_city,nominee_district,nominee_pincode,nominee_location_url,teamid,amount,dc_amount,after_dc_factor_amount,interest,totalAmount,photo,verification,nominee_verification,pending_amount,start_date,is_addr_differ) VALUES ('$user_name','$phone','$phone2','$aadhar','$city','$district','$pincode','$location_url','$leader','$nominee_name','$nominee_phone','$nominee_phone2','$nominee_aadhar','$nominee_relationship','$nominee_city','$nominee_district','$nominee_pincode','$nominee_location_url','$teamid','$amount','$dc_amount','$after_dc_factor_amount','$interest','$totalAmount','photo','$verification','$nominee_verification','$pending_amount','$start_date',$is_addr_differ)";
 
  if ($conn->query($sql) === TRUE) {
   $last_id = $conn->insert_id;
@@ -53,7 +57,15 @@ $photo_url =  "images/group/". $teamid . "/".$last_id . "." . $file_ext;
    $sql_update =  "UPDATE  members  SET photo  =  '$photo_url'  WHERE id =  $last_id ";
 
   if ($conn->query($sql_update) === TRUE) {
+    $sql_procedure =  " CALL insert_dates('$start_date', $time_period, $last_id, $teamid, $emi);";
+
+  if ($conn->query($sql_procedure) === TRUE) {
    echo "ok";
+
+   
+  } else {
+    echo "Error: " . $sql_procedure . "<br>" . $conn->error;
+  }
   } else {
     echo "Error: " . $sql . "<br>" . $conn->error;
   }

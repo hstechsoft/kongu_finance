@@ -50,7 +50,7 @@ const dateInput = document.getElementById('demo_date');
 
 
 get_team_dropdown()
-
+get_employees_dropdown()
       $("#switch_view").on("change", function(event) {
 
  $("#group_div").toggle();
@@ -73,10 +73,148 @@ $("#member_select").on("change", function(event) {
    $("#group_txt").closest(".card-header").addClass("text-bg-success")
 
     get_payment_dashboard($(this).val());
+  get_emi_table($("#team_select").val())
+if($(this).val() == "all")
+{
+    $("#group_txt").text("Group Payment Entry")
+   $("#group_txt").closest(".card-header").removeClass("text-bg-success") 
+   
+}
+
+});
+
+$('#group_pay_table').on("change", "tr td input[type='checkbox']", function(event) {
+  event.preventDefault();
+
+
+  if($(this).is(':checked')) {
+    $(this).closest('tr').find('td').eq(3).attr('contenteditable', 'true');
+     $(this).closest('tr').find('td').eq(3).text(parseFloat($(this).closest('tr').find('td').eq(2).text(),2));
+
+  } else {
+    
+    $(this).closest('tr').find('td').eq(3).attr('contenteditable', 'false');
+    $(this).closest('tr').find('td').eq(3).text('0');
+  }
 });
 
 
+$("#reset_group_btn").on("click", function(event) {
+  // Do not reset until confirm
+  event.preventDefault();
+  // TODO: handle click here
+
+
+  {
+  swal({
+    title: "Are you sure - Delete? ",
+    text: "You will not be recover this  again!",
+    icon: "warning",
+    buttons: [
+      'No, cancel it!',
+      'Yes, I am sure!'
+    ],
+    dangerMode: true,
+  }).then(function(isConfirm) {
+    if (isConfirm) {
+      swal({
+        title: 'Applied!',
+        text: 'successfully Deleted!',
+        icon: 'success'
+      }).then(function() {
+
+         $("#group_pay_table").empty();
+         // Optionally reset other related UI elements
+         $("#pay_date").text("");
+         $("#group_txt").text("Group Payment Entry");
+         $("#group_txt").closest(".card-header").removeClass("text-bg-success");
+          $('#member_select').val('');
+            $('#team_select').val('');
+              $('#demo_date').val('');
+          
+
+      });
+    } else {
+      swal("Cancelled", "This is safe :)", "error");
+    }
+  })
+  }
+
+}); 
+
+  $('#pay_form').on('submit', function (event) {
+  event.preventDefault();
+
+  if (!this.checkValidity()) {
+    event.stopPropagation();
+    $(this).addClass('was-validated');
+  shw_toast("Error","Kindly fill all required fields","error")
+    return;
+  }
+
+  $(this).addClass('was-validated');
+
+  // // ✅ All database (AJAX) operations go here
+  // if (actionType === 'submit') {
+  //   // insert via AJAX
+  // } else if (actionType === 'update') {
+  //   // update via AJAX
+  // }
 });
+
+});
+
+  function get_employees_dropdown()
+   {
+    
+   
+   $.ajax({
+     url: "php/get_employees_dropdown.php",
+     type: "get", //send it through get method
+     data: {
+     
+     },
+     success: function (response) {
+   
+   
+   if (response.trim() != "error") {
+
+    if (response.trim() != "0 result")
+    {
+   
+     var obj = JSON.parse(response);
+   var count =0 
+   
+   
+     obj.forEach(function (obj) {
+        count = count +1;
+$('#employee').append("<option value = '"+obj.id+"'>"+obj.employee_name+"</option>")
+
+     });
+   
+    
+   }
+   else{
+   // $("#@id@") .append("<td colspan='0' scope='col'>No Data</td>");
+ 
+   }
+  }
+   
+  
+   
+   
+       
+     },
+     error: function (xhr) {
+         //Do Something to handle error
+     }
+   });
+   
+   
+   
+      
+   }
+  
 
 
  function get_team_members(team_id)
@@ -92,7 +230,9 @@ $("#member_select").on("change", function(event) {
      success: function (response) {
    console.log(response);
    
-   
+   $('#member_select').empty()
+   $('#member_select').append("<option value='' disabled selected>Select Member</option>")
+     $('#member_select').append("<option value='all'>All Member</option>")
    if (response.trim() != "error") {
 
     if (response.trim() != "0 result")
@@ -135,17 +275,23 @@ $('#member_select').append("<option value='"+obj.id+"'>"+obj.member+"</option>")
    
  function get_emi_table(team_id)
    {
-    
+    var mem_query = "1";
+    if($("#member_select").val() != null  && $("#member_select").val() != undefined && $("#member_select").val() != "" && $("#member_select").val() != "all")
+    {
+        mem_query = " member_id = " + $("#member_select").val();
+    }
    
    $.ajax({
      url: "php/get_emi_table.php",
      type: "get", //send it through get method
      data: {
-        team_id : team_id
+        team_id : team_id,
+        mem_query : mem_query
+
      },
      success: function (response) {
    console.log(response);
-   
+   $('#group_pay_table').empty()
    
    if (response.trim() != "error") {
 
@@ -154,11 +300,12 @@ $('#member_select').append("<option value='"+obj.id+"'>"+obj.member+"</option>")
    
      var obj = JSON.parse(response);
    var count =0 
-let amountPay = parseInt($("#amount_pay").val()) || 0;
+var amountPay =   0;
 
  
    
      obj.forEach(function (obj) {
+      amountPay =   obj.adv
         $("#pay_date").text("Payment On/Before - " + obj.collection_date)
         count = count +1;
         var pay_amount = obj.adv
@@ -168,14 +315,14 @@ let amountPay = parseInt($("#amount_pay").val()) || 0;
 
             pay_amount = "Advance available - " + Math.abs(value)
         }
-$('#group_pay_table').append("<tr><td>"+count+"</td><td>"+obj.member+"</td><td>"+pay_amount+"</td><td contenteditable = 'true'>"+amountPay+"</td></tr>")
+$('#group_pay_table').append("<tr data-mem_id='"+obj.member_id+"'><td><div style='width: 50px; height:50px; overflow: hidden;'> <img src='"+obj.photo+"' class='img-fluid img-thumbnail' style='height: 100%; width: 100%; object-fit:contain ;' alt=''> </div></td><td>"+obj.member+"</td><td>"+pay_amount+"</td><td contenteditable = 'true'>"+amountPay+"</td><td><div class='form-check '> <input class='form-check-input' checked type='checkbox' value='"+obj.member_id+"' > <label class='form-check-label' for=''> </label></div></td></tr>")
 
      });
    
    
    }
    else{
-   // $("#@id@") .append("<td colspan='0' scope='col'>No Data</td>");
+    $("#group_pay_table") .append("<tr class='text-bg-secondary text-center'><td colspan='6' scope='col'>No Data</td></tr>");
  
    }
   }
