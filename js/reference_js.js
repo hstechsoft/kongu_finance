@@ -35,7 +35,7 @@ $(web_addr).parent().parent().find("a").eq(0).toggleClass('active')
 
 
 
-insert_material_request_form();
+
 
 });
 
@@ -44,53 +44,7 @@ insert_material_request_form();
 
 
 
-  function insert_material_request_form()
-   {
-    
-   
-   $.ajax({
-     url: "php/insert_material_request_form.php",
-     type: "get", //send it through get method
-     data: {
-  emp_id : emp_id,
-part_id : part_id,
-bom_production :  $('#bom_production :selected').val(),
-order_type :  $('#order_type :selected').val(),
-shortfall_qty :  $('#shortfall_qty').val(),
-stock_for_sufficent_days :  $('#stock_for_sufficent_days').val(),
-req_qty :  $('#req_qty').val(),
-req_date :  $('#req_date').val(),
-last_purchase_date :  $('#last_purchase_date').val(),
-last_purchase_qty :  $('#last_purchase_qty').val(),
-material_receipt_status :  $('#material_receipt_status :selected').val(),
-prepared_by : emp_id,
-physical_stock_array : physical_stock_array
 
-     },
-     success: function (response) {
-   console.log(response);
-   
-   
-   if (response.trim() == "ok") {
-
- 
-   
-  }
-   
-  
-   
-   
-       
-     },
-     error: function (xhr) {
-         //Do Something to handle error
-     }
-   });
-   
-   
-   
-      
-   }
 
 
 

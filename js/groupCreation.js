@@ -30,7 +30,7 @@ $(web_addr).parent().parent().find("a").eq(0).toggleClass('active')
 get_group_finance_collections()
 
 
-    // check_login();
+     check_login();
     
   $("#unamed").text(localStorage.getItem("ls_uname"))
 
@@ -431,23 +431,23 @@ $('#employee').append("<option value = '"+obj.id+"'>"+obj.employee_name+"</optio
 
 
 
-// function check_login()
-// {
+function check_login()
+{
  
-// if (localStorage.getItem("logemail") == null && phone_id == null )  {
-//  window.location.replace("login.html");
-// }
-// else if (localStorage.getItem("logemail") == null && phone_id != null )
-//  {
-// get_current_userid_byphoneid();
-// $('#menu_bar').hide()
-//  }
+if (localStorage.getItem("logemail") == null && phone_id == null )  {
+ window.location.replace("login.html");
+}
+else if (localStorage.getItem("logemail") == null && phone_id != null )
+ {
+get_current_userid_byphoneid();
+$('#menu_bar').hide()
+ }
 
-//  else
-//  {
+ else
+ {
    
-//  }
-// }
+ }
+}
 
 
 function get_current_userid_byphoneid()
