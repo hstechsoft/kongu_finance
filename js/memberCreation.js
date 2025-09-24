@@ -78,7 +78,7 @@ shw_toast("File Selected","File Name : " + property.name + " | File Size : " + (
 
   $(this).addClass('was-validated');
 
-  if($("#team_select").val() == "")
+  if($('#team_select').find(":selected").val() == "")
   {
     shw_toast("Error","Please select Team","error");
     return;
@@ -334,6 +334,7 @@ if($("#different_address").prop("checked") == true)
       var time_period = parseFloat($('#team_select option:selected').data('time_period'))
 
 
+
    
    $.ajax({
      url: "php/update_members.php",
@@ -360,7 +361,7 @@ nominee_city :  $('#nominee_city').val(),
 nominee_district :  $('#nominee_district').val(),
 nominee_pincode :  $('#nominee_pincode').val(),
 nominee_location_url :  $('#nominee_location_url').val(),
-teamid :  $('#team_select').val(),
+teamid :  $('#team_select').find(":selected").val(),
 amount :  $('#amount').val(),
 dc_amount : dc_amount,
 after_dc_factor_amount : 0,
@@ -412,7 +413,7 @@ function update_photo(property,memberid)
 {
  var form_data = new FormData();
  form_data.append("file",property);
- form_data.append("team_id",$("#team_select").val());
+ form_data.append("team_id",$('#team_select').find(":selected").val());
  form_data.append("member_id",  memberid);
   form_data.append("file_ext",file_extension);
    
@@ -436,7 +437,7 @@ function update_photo(property,memberid)
           
          console.log(data);
          
-         var path_d = "images/group/"+$("#team_select").val() + "/"+  memberid + "." + file_extension
+         var path_d = "images/group/"+$('#team_select').find(":selected").val() + "/"+  memberid + "." + file_extension
          update_user_info(path_d,memberid);
          
         
@@ -709,7 +710,7 @@ if($("#different_address").prop("checked") == true)
     form_data.append("location_url",$("#location_url").val());
     form_data.append("nominee_pincode",$("#nominee_pincode").val());
     form_data.append("nominee_location_url",$("#nominee_location_url").val());
-    form_data.append("team_id",$("#team_select").val());
+    form_data.append("team_id",$('#team_select').find(":selected").val());
     form_data.append("amount",$("#amount").val());
   form_data.append("start_date",$("#start_date").val());
     form_data.append("is_addr_differ",is_addr_differ);

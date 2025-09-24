@@ -212,7 +212,7 @@ pay_details : JSON.stringify(pay_details)
    
    if (response.trim() == "ok") {
 
- 
+ location.reload();
    
   }
    

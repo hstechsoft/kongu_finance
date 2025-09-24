@@ -29,7 +29,7 @@ return $data;
 $sql = "INSERT INTO memberspayment ( member_id,paid_date,is_paid,paid_amount,payment_mode,pending_amount,emp_id,created_at) VALUES ($member_id,$paid_date,$is_paid,$paid_amount,$payment_mode,$pending_amount,$emp_id,$created_at)";
 
   if ($conn->query($sql) === TRUE) {
-   echo "ok";
+
   } else {
     echo "Error: " . $sql . "<br>" . $conn->error;
   }

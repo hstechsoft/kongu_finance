@@ -9,7 +9,7 @@ $city = test_input($_GET['city']);
 $district = test_input($_GET['district']);
 $pincode = test_input($_GET['pincode']);
 $location_url = test_input($_GET['location_url']);
-$leader = test_input($_GET['leader']);
+$leader = ($_GET['leader']);
 $nominee_name = test_input($_GET['nominee_name']);
 $nominee_phone = test_input($_GET['nominee_phone']);
 $nominee_phone2 = test_input($_GET['nominee_phone2']);
@@ -37,7 +37,7 @@ $time_period = ($_GET['time_period']);
 
 
 
- 
+
  
 function test_input($data) {
 $data = trim($data);
@@ -49,10 +49,10 @@ return $data;
 
 if($photo == "''")
 {
-   $sql =  "UPDATE  members SET user_name =  $user_name,phone =  $phone,phone2 =  $phone2,aadhar =  $aadhar,city =  $city,district =  $district,pincode =  $pincode,location_url =  $location_url,leader =  $leader,nominee_name =  $nominee_name,nominee_phone =  $nominee_phone,nominee_phone2 =  $nominee_phone2,nominee_aadhar =  $nominee_aadhar,nominee_relationship =  $nominee_relationship,nominee_city =  $nominee_city,nominee_district =  $nominee_district,nominee_pincode =  $nominee_pincode,nominee_location_url =  $nominee_location_url,teamid =  $teamid,amount =  $amount,dc_amount =  $dc_amount,after_dc_factor_amount =  $after_dc_factor_amount,interest =  $interest,totalAmount =  $totalAmount,verification =  $verification,nominee_verification =  $nominee_verification,pending_amount =  $pending_amount,is_addr_differ =  $is_addr_differ,start_date =  $start_date WHERE id =  $id";
+   $sql =  "UPDATE  members SET user_name =  $user_name,phone =  $phone,phone2 =  $phone2,aadhar =  $aadhar,city =  $city,district =  $district,pincode =  $pincode,location_url =  $location_url,leader =  $leader,nominee_name =  $nominee_name,nominee_phone =  $nominee_phone,nominee_phone2 =  $nominee_phone2,nominee_aadhar =  $nominee_aadhar,nominee_relationship =  $nominee_relationship,nominee_city =  $nominee_city,nominee_district =  $nominee_district,nominee_pincode =  $nominee_pincode,nominee_location_url =  $nominee_location_url,teamid =  '$teamid',amount =  $amount,dc_amount =  $dc_amount,after_dc_factor_amount =  $after_dc_factor_amount,interest =  $interest,totalAmount =  $totalAmount,verification =  $verification,nominee_verification =  $nominee_verification,pending_amount =  $pending_amount,is_addr_differ =  $is_addr_differ,start_date =  $start_date WHERE id =  '$id'";
 }
 else
- $sql =  "UPDATE  members SET user_name =  $user_name,phone =  $phone,phone2 =  $phone2,aadhar =  $aadhar,city =  $city,district =  $district,pincode =  $pincode,location_url =  $location_url,leader =  $leader,nominee_name =  $nominee_name,nominee_phone =  $nominee_phone,nominee_phone2 =  $nominee_phone2,nominee_aadhar =  $nominee_aadhar,nominee_relationship =  $nominee_relationship,nominee_city =  $nominee_city,nominee_district =  $nominee_district,nominee_pincode =  $nominee_pincode,nominee_location_url =  $nominee_location_url,teamid =  $teamid,amount =  $amount,dc_amount =  $dc_amount,after_dc_factor_amount =  $after_dc_factor_amount,interest =  $interest,totalAmount =  $totalAmount,photo =  $photo,verification =  $verification,nominee_verification =  $nominee_verification,pending_amount =  $pending_amount,is_addr_differ =  $is_addr_differ,start_date =  $start_date WHERE id =  $id";
+ $sql =  "UPDATE  members SET user_name =  $user_name,phone =  $phone,phone2 =  $phone2,aadhar =  $aadhar,city =  $city,district =  $district,pincode =  $pincode,location_url =  $location_url,leader =  $leader,nominee_name =  $nominee_name,nominee_phone =  $nominee_phone,nominee_phone2 =  $nominee_phone2,nominee_aadhar =  $nominee_aadhar,nominee_relationship =  $nominee_relationship,nominee_city =  $nominee_city,nominee_district =  $nominee_district,nominee_pincode =  $nominee_pincode,nominee_location_url =  $nominee_location_url,teamid =  '$teamid',amount =  $amount,dc_amount =  $dc_amount,after_dc_factor_amount =  $after_dc_factor_amount,interest =  $interest,totalAmount =  $totalAmount,photo =  $photo,verification =  $verification,nominee_verification =  $nominee_verification,pending_amount =  $pending_amount,is_addr_differ =  $is_addr_differ,start_date =  $start_date WHERE id =  '$id'";
 
   if ($conn->query($sql) === TRUE) {
 
@@ -65,7 +65,9 @@ else
    echo "ok";
 
    
-  } else {
+  }
+  
+  else {
     echo "Error: " . $sql_procedure . "<br>" . $conn->error;
   }
   } else {
