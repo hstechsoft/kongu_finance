@@ -32,20 +32,8 @@ $(web_addr).parent().parent().find("a").eq(0).toggleClass('active')
     
   $("#unamed").text(localStorage.getItem("ls_uname"))
 
-const dateInput = document.getElementById('demo_date');
-  const today = new Date().toISOString().split('T')[0];
 
-  // Disable dates after today
-  dateInput.setAttribute('max', today);
 
-  // Auto validate when user selects/enters a date
-  dateInput.addEventListener('input', function () {
-    if (dateInput.value > today) {
-      dateInput.classList.add('is-invalid');
-    } else {
-      dateInput.classList.remove('is-invalid');
-    }
-  });
 
 
 
@@ -73,7 +61,7 @@ $("#member_select").on("change", function(event) {
    $("#group_txt").closest(".card-header").addClass("text-bg-success")
 
     get_payment_dashboard($(this).val());
-  get_emi_table($("#team_select").val())
+
 if($(this).val() == "all")
 {
     $("#group_txt").text("Group Payment Entry")
@@ -130,7 +118,7 @@ $("#reset_group_btn").on("click", function(event) {
          $("#group_txt").closest(".card-header").removeClass("text-bg-success");
           $('#member_select').val('');
             $('#team_select').val('');
-              $('#demo_date').val('');
+              $('#collection_date').val('');
           
 
       });
@@ -164,10 +152,76 @@ insert_memberspayment()
 
 });
 
+$("#collection_date").on("change", function(event) {
+  event.preventDefault();
+  // your logic here
+  get_emi_table($('#team_select').val())
+  $("#paid_date").val($(this).val())
 });
+
+});
+
+  function get_collection_data(team_id)
+   {
+    
+   
+   $.ajax({
+     url: "php/get_collection_data.php",
+     type: "get", //send it through get method
+     data: {
+     team_id : team_id
+
+     },
+     success: function (response) {
+   
+   $('#collection_date').empty()
+   $('#collection_date').append("<option selected disabled value=''>Choose...</option>")
+   console.log(response);
+   if (response.trim() != "error") {
+
+    if (response.trim() != "0 result")
+    {
+   
+     var obj = JSON.parse(response);
+   var count =0 
+   
+   
+     obj.forEach(function (obj) {
+      var class_d = "";
+        count = count +1;
+        if(obj.c_sts == " - entry")
+        {
+          class_d = "text-success fw-bold"
+        }
+$('#collection_date').append("<option class= '"+class_d+"' value='"+obj.c_date+"'>"+count+"."+obj.collection_date+"</option>")
+
+     });
+
+   }
+   else{
+   // $("#@id@") .append("<td colspan='0' scope='col'>No Data</td>");
+ 
+   }
+  }
+   
+  
+   
+   
+       
+     },
+     error: function (xhr) {
+         //Do Something to handle error
+     }
+   });
+   
+   
+   
+      
+   }
 
   function insert_memberspayment()
    {
+    $('#hs_loader').removeClass('d-none');
     var pay_details = [];
     $("#group_pay_table tr").each(function() {
 
@@ -176,7 +230,7 @@ insert_memberspayment()
    var inputParts = $(this).find("td").eq(1).find("li");
       // your logic here
        var member_id = $(this).data("mem_id");  
-var paid_date = $('#demo_date').val();
+var paid_date = $('#paid_date').val();
 var is_paid = 1;
 var paid_amount  = parseFloat($(this).find("td").eq(3).text());
 var payment_mode = $(this).find("td").eq(4).find("select").val();
@@ -208,7 +262,7 @@ pay_details : JSON.stringify(pay_details)
      },
      success: function (response) {
    
-   console.log(response);
+$('#hs_loader').addClass('d-none');
    
    if (response.trim() == "ok") {
 
@@ -254,14 +308,17 @@ pay_details : JSON.stringify(pay_details)
    
      var obj = JSON.parse(response);
    var count =0 
-   
+   var cur_date = ""
    
      obj.forEach(function (obj) {
         count = count +1;
 $('#employee').append("<option value = '"+obj.id+"'>"+obj.employee_name+"</option>")
-
+cur_date = obj.cur_date
      });
+   console.log(cur_date);
    
+    $("#paid_date").val(cur_date)
+    console.log( $("#paid_date").val());
     
    }
    else{
@@ -318,6 +375,8 @@ $('#member_select').append("<option value='"+obj.id+"'>"+obj.member+"</option>")
 
      });
    
+    // get_emi_table(team_id)
+    get_collection_data(team_id)
     get_emi_table(team_id)
    }
    else{
@@ -356,7 +415,8 @@ $('#member_select').append("<option value='"+obj.id+"'>"+obj.member+"</option>")
      type: "get", //send it through get method
      data: {
         team_id : team_id,
-        mem_query : mem_query
+        mem_query : mem_query,
+        emi_date : $('#collection_date').val()
 
      },
      success: function (response) {
@@ -480,7 +540,7 @@ team_id : team_id
 
      },
      success: function (response) {
-
+$('#report_tbl').empty()
       console.log(response);
    var count = 0;
     if (response.trim() != "error") {

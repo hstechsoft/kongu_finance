@@ -22,7 +22,7 @@ return $data;
   $dt = new DateTime('@' . ($detail['created_at'] / 1000));
   $dt->setTimezone(new DateTimeZone('Asia/Kolkata'));
   $created_at = "'" . $dt->format('Y-m-d H:i:s') . "'";
-  echo $created_at;
+
       $emp_id = test_input($detail['emp_id']); 
 
 

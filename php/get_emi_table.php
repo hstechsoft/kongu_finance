@@ -5,7 +5,15 @@
 
  $mem_query = ($_GET['mem_query']);
 
- 
+  $emi_date = ($_GET['emi_date']);
+
+if($emi_date == ""){
+    $emi_date = "CURDATE()";
+}
+else{
+    
+    $emi_date = "'".$emi_date."'";
+}
  
 function test_input($data) {
 $data = trim($data);
@@ -37,7 +45,7 @@ pay_sum AS(
         IF(
             DATEDIFF(
                 fp.collection_date,
-                CURRENT_DATE()) < 7,
+               $emi_date) < 7,
                 1,
                 0
             ) and fp.group_id =  $team_id and $mem_query

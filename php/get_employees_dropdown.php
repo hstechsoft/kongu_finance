@@ -13,19 +13,26 @@ $data = "'".$data."'";
 return $data;
 }
 
+$sql = "SET time_zone = '+05:30';";
+$sql .= "SELECT employee_name,id,curdate() as cur_date FROM employees;";
 
- $sql = "SELECT employee_name,id FROM employees";
-
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    $rows = array();
-    while($r = mysqli_fetch_assoc($result)) {
-        $rows[] = $r;
-    }
-    print json_encode($rows);
+if ($conn->multi_query($sql)) {
+    do {
+        if ($result = $conn->store_result()) {
+            if ($result->num_rows > 0) {
+                $rows = array();
+                while ($r = $result->fetch_assoc()) {
+                    $rows[] = $r;
+                }
+                echo json_encode($rows);
+            } else {
+                echo "0 result";
+            }
+            $result->free();
+        }
+    } while ($conn->more_results() && $conn->next_result());
 } else {
-  echo "0 result";
+    echo "Error: " . $conn->error;
 }
 $conn->close();
 
