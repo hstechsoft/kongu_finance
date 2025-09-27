@@ -532,11 +532,12 @@ $('#team_select').append("<option value='"+obj.id+"' data-ic_factor='"+obj.ic_fa
     
    
    $.ajax({
-     url: "php/get_payment_dashboard.php",
+     url: "php/get_payment_dashboard_all.php",
      type: "get", //send it through get method
      data: {
 
-team_id : team_id
+team_id : 63,
+mem_query  : "1"
 
      },
      success: function (response) {
@@ -554,7 +555,7 @@ $('#report_tbl').empty()
     //    $('#report_tbl').append("<tr><td>"+count+"</td><td>"+obj.collection_date+"</td><td>"+obj.expected_amount+"</td><td>"+obj.total_paid+"</td><td>"+obj.pending_balance+"</td><td>"+obj.amount_to_pay+"</td><td>"+obj.available_advance+"</td><td>"+obj.sts+"</td><td>"+obj.his_html+"</td></tr>")
        
 
-        $('#report_tbl').append("<tr><td>"+count+"</td><td>"+obj.collection_date+"</td><td>"+obj.expected_amount+"</td><td>"+obj.total_paid+"</td><td>"+obj.amount_to_pay+"</td><td>"+obj.available_advance+"</td><td>"+obj.sts+"</td><td>"+obj.his_html+"</td></tr>")
+        $('#report_tbl').append("<tr><td>"+count+"</td><td>"+obj.collection_date+"</td><td>"+obj.payable+"</td><td>"+obj.paid_amount+"</td><td>"+obj.bal+"</td><td>"+obj.sts+"</td><td>"+obj.his_html+"</td></tr>")
        });
       
     //    get_sales_order()

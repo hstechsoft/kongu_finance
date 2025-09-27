@@ -2,6 +2,7 @@
  include 'db_head.php';
 
   $team_id = test_input($_GET['team_id']);
+  $mem_query = ($_GET['mem_query']);
 
  
  
@@ -174,27 +175,27 @@ WITH
         '0000-00-00'
         )
     WHERE
-        fp.member_id =   $team_id
+        fp.group_id =   $team_id and $mem_query
     GROUP BY
         collection_date,
         fp.finance_id
     ORDER BY
-        fp.collection_date
+        fp.member_id
 ),
 sum_table AS(
     SELECT
         pay_info.*,
         SUM(pay_amount) OVER(
         ORDER BY
-            collection_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+            collection_date,member_id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
     ) AS pay_amount_total_till_date,
     SUM(paid_amount) OVER(
     ORDER BY
-        collection_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        collection_date,member_id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
 ) AS paid_amount_total_till_date,
 SUM(paid_amount) OVER(
     ORDER BY
-        collection_date ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING
+        collection_date,member_id ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING
 ) AS paid_amount_total_pre_date
 FROM
     pay_info
@@ -237,7 +238,7 @@ SELECT
         if(paid_amount>0,'no need but paid','no need')
     ) AS sts
 FROM
-    sum_table
+    sum_table order by member_id
 SQL;
 
 $result = $conn->query($sql);
