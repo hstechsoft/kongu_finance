@@ -1,16 +1,16 @@
 
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "u333142350_kongufinace";
+// $servername = "localhost";
+// $username = "root";
+// $password = "";
+// $dbname = "u333142350_kongufinace";
 
 
 
-// $servername = "srv1002.hstgr.io";
-// $username = "u333142350_kongufinance";
-// $password = "W&n7tE&#Gm[H?k64";
-// $dbname   = "u333142350_kongufinace";
+$servername = "srv1002.hstgr.io";
+$username = "u333142350_kongufinance";
+$password = "W&n7tE&#Gm[H?k64";
+$dbname   = "u333142350_kongufinace";
 // $servername = "localhost";
 // $username = "u211327498_jaysan_user";
 // $password = "Admin@123";

@@ -62,24 +62,39 @@ FROM
         ) ) as his_html,
         GROUP_CONCAT(mp.paid_amount) AS pay_history
     FROM
-        finance_payment fp
-    LEFT JOIN memberspayment mp ON
-        mp.member_id = fp.member_id AND mp.paid_date <= fp.collection_date AND mp.paid_date > IFNULL(
+    finance_payment fp
+LEFT JOIN memberspayment mp ON
+    mp.member_id = fp.member_id AND IF(
+        mp.paid_date <= fp.collection_date,
+        1,
+        IF(
             (
             SELECT
-                MAX(fp2.collection_date)
+                MAX(finance_payment.collection_date)
             FROM
-                finance_payment fp2
+                finance_payment
             WHERE
-                fp2.collection_date < fp.collection_date AND fp2.member_id = fp.member_id
-        ),
-        '0000-00-00'
-        ) where fp.member_id =  $team_id 
-    GROUP BY
-        fp.collection_date,
-        fp.pay_amount
-    ORDER BY
-        fp.collection_date
+                finance_payment.member_id = $team_id 
+        ) < fp.collection_date,1,0
+        )
+    ) AND mp.paid_date > IFNULL(
+        (
+        SELECT
+            MAX(fp2.collection_date)
+        FROM
+            finance_payment fp2
+        WHERE
+            fp2.collection_date < fp.collection_date AND fp2.member_id = fp.member_id
+    ),
+    '0000-00-00'
+    )
+WHERE
+    fp.member_id = $team_id 
+GROUP BY
+    fp.collection_date,
+    fp.pay_amount
+ORDER BY
+    fp.collection_date
 ) AS t,
 (
 SELECT
@@ -104,6 +119,5 @@ if ($result->num_rows > 0) {
 }
 $conn->close();
 
- ?>
 
 
