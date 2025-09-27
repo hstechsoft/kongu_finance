@@ -4,6 +4,7 @@ var phone_id = urlParams.get('phone_id');
   var current_user_id =  localStorage.getItem("ls_uid") ;
 var current_user_name =  localStorage.getItem("ls_uname") ; 
  var physical_stock_array = [];
+ 
 $(document).ready(function(){
  $("#individual_div").hide()
   
@@ -52,6 +53,7 @@ $("#team_select").on("change", function(event) {
   event.preventDefault();
   // your logic here
   get_team_members($(this).val())
+  get_payment_dashboard_all($(this).val())
 });
 
 $("#member_select").on("change", function(event) {
@@ -158,6 +160,15 @@ $("#collection_date").on("change", function(event) {
   get_emi_table($('#team_select').val())
   $("#paid_date").val($(this).val())
 });
+
+
+$("#download_report").click(function () {
+  $("#report_full_tbl").table2excel({
+    filename:  $("#team_select").find("option:selected").text() + "_Payment Dashboard" +  ".xls", // File name
+    name: "Report"          // Sheet name
+  });
+});
+
 
 });
 
@@ -527,33 +538,41 @@ $('#team_select').append("<option value='"+obj.id+"' data-ic_factor='"+obj.ic_fa
 
 
 
-  function get_payment_dashboard(team_id)
+  function get_payment_dashboard(mem_id)
    {
     
    
    $.ajax({
-     url: "php/get_payment_dashboard_all.php",
+     url: "php/get_payment_dashboard.php",
      type: "get", //send it through get method
      data: {
 
-team_id : 63,
-mem_query  : "1"
+team_id : mem_id,
+
 
      },
      success: function (response) {
 $('#report_tbl').empty()
-      console.log(response);
+       console.log(response);
    var count = 0;
     if (response.trim() != "error") {
        var obj = JSON.parse(response);
       
 
-      
+      var collection_date = [];
       
        obj.forEach(function (obj) {
      count = count + 1;
     //    $('#report_tbl').append("<tr><td>"+count+"</td><td>"+obj.collection_date+"</td><td>"+obj.expected_amount+"</td><td>"+obj.total_paid+"</td><td>"+obj.pending_balance+"</td><td>"+obj.amount_to_pay+"</td><td>"+obj.available_advance+"</td><td>"+obj.sts+"</td><td>"+obj.his_html+"</td></tr>")
-       
+      
+
+
+
+
+ 
+
+
+
 
         $('#report_tbl').append("<tr><td>"+count+"</td><td>"+obj.collection_date+"</td><td>"+obj.payable+"</td><td>"+obj.paid_amount+"</td><td>"+obj.bal+"</td><td>"+obj.sts+"</td><td>"+obj.his_html+"</td></tr>")
        });
@@ -577,6 +596,68 @@ $('#report_tbl').empty()
    }
 
 
+  function get_payment_dashboard_all(team_id)
+   {
+    
+   $("#title_tbl").text($("#team_select").find("option:selected").text() + " - Payment Dashboard")
+   $.ajax({
+     url: "php/get_payment_dashboard_all.php",
+     type: "get", //send it through get method
+     data: {
+
+team_id : team_id,
+mem_query  : "1"
+
+     },
+     success: function (response) {
+$('#report_all_tbl').empty()
+$('#report_all_head').empty()
+       console.log(response);
+   var count = 0;
+    if (response.trim() != "error") {
+       var obj = JSON.parse(response);
+      
+
+      
+      
+       obj.forEach(function (obj) {
+     count = count + 1;
+    //    $('#report_tbl').append("<tr><td>"+count+"</td><td>"+obj.collection_date+"</td><td>"+obj.expected_amount+"</td><td>"+obj.total_paid+"</td><td>"+obj.pending_balance+"</td><td>"+obj.amount_to_pay+"</td><td>"+obj.available_advance+"</td><td>"+obj.sts+"</td><td>"+obj.his_html+"</td></tr>")
+       var td_report1 = "<th scope ='col'>Date</th>";
+if(count == 1)
+{
+var dueDatesArray = obj.due_dates.split(","); // Convert to array
+
+dueDatesArray.forEach(function(item) {
+  td_report1 = td_report1 + "<th scope='col'>" + item + "</th>";
+});
+ $('#report_all_head').append("<tr>" + td_report1 +"</tr>")
+}
+
+
+
+$('#report_all_tbl').append(obj.payable_amounts_tr)
+
+       });
+   
+      
+    //    get_sales_order()
+      }
+      
+  
+   
+   
+       
+     },
+     error: function (xhr) {
+         //Do Something to handle error
+     }
+   });
+   
+   
+   
+      
+   }
 
 
   

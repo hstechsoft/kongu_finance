@@ -197,7 +197,30 @@
      
                         </div>
                              <div class="col-md-6">
-                          
+
+                              <div class="card">
+                                <div class="card-header">
+<button type="button" class="btn btn-primary " id="download_report"><i class="fa fa-download" aria-hidden="true"></i></button>
+                                </div>
+                                <div class="card-body">
+                                                            <div class="table-responsive">
+                          <table class="table caption-top table-bordered table-striped align-middle text-center" id="report_full_tbl">
+    <caption>Payment Report Table</caption>
+    <thead>
+   <tr class="text-bg-secondary"><th colspan="100" id="title_tbl"></th></tr>
+    </thead>
+ 
+  <thead id="report_all_head">
+   
+  </thead>
+  <tbody id="report_all_tbl">
+    <!-- Table rows go here -->
+  </tbody>
+</table>
+   </div>
+                                </div>
+                              </div>
+
                         </div>
 
                           <div class="table-responsive">
@@ -220,6 +243,8 @@
     <!-- Table rows go here -->
   </tbody>
 </table>
+
+
 </div>
                     </div>
 
@@ -243,9 +268,9 @@
 <!-- font awesome -->
 <script src="https://kit.fontawesome.com/86b62f3d3e.js" crossorigin="anonymous"></script>
 
+<script src="//cdn.rawgit.com/rainabba/jquery-table2excel/1.1.0/dist/jquery.table2excel.min.js"></script>
 <!-- Sweet alert -->
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
 
 <!-- external js -->
 <script src="js/index.js" type="module"></script>

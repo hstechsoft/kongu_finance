@@ -186,20 +186,23 @@ sum_table AS(
     SELECT
         pay_info.*,
         SUM(pay_amount) OVER(
+           PARTITION BY member_id
         ORDER BY
-            collection_date,member_id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+            collection_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
     ) AS pay_amount_total_till_date,
     SUM(paid_amount) OVER(
+           PARTITION BY member_id
     ORDER BY
-        collection_date,member_id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        collection_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
 ) AS paid_amount_total_till_date,
 SUM(paid_amount) OVER(
+       PARTITION BY member_id
     ORDER BY
-        collection_date,member_id ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING
+        collection_date ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING
 ) AS paid_amount_total_pre_date
 FROM
     pay_info
-)
+),final as (
 SELECT
     sum_table.*,
     sum_table.pay_amount_total_till_date - sum_table.paid_amount_total_till_date AS bal,
@@ -217,28 +220,46 @@ SELECT
         (
             IF(
                 paid_amount = 0,
-                'not paid',
+                if(collection_date <= CURDATE(),
+                'text-bg-danger','disabled'),
                 IF(
                     (
                         sum_table.pay_amount_total_till_date - IFNULL(
                             sum_table.paid_amount_total_pre_date,
                             0
                         ) )= paid_amount,
-                        'paid',
+                        'text-bg-success',
                       IF(
                     (
                         sum_table.pay_amount_total_till_date - IFNULL(
                             sum_table.paid_amount_total_pre_date,
                             0
-                        ) )< paid_amount,'over paid','partially paid')
+                        ) )< paid_amount,'text-bg-success fw-bold ','text-bg-warning')
                     )
                 
             )
         ),
-        if(paid_amount>0,'no need but paid','no need')
-    ) AS sts
+        if(paid_amount>0,'','')
+    ) AS sts,
+   
+     sum_table.pay_amount_total_till_date - IFNULL(
+        sum_table.paid_amount_total_pre_date,
+        0
+    )  AS payable_amounts,
+ 
+
+    
+    (SELECT user_name FROM members WHERE members.id = sum_table.member_id) AS member_name
 FROM
-    sum_table order by member_id
+    sum_table ) 
+SELECT
+   member_name, 
+   group_concat(date_only(collection_date)) AS due_dates,  
+   group_concat(payable_amounts) AS payable_amounts ,
+    member_id,
+    tr(group_concat(concat('<th scope=\"col\">',collection_date,'</th>'))) AS due_dates_tr,
+    tr(concat('<th scope=\"col\">',member_name,'</th>',(group_concat(concat('<td class=\"',sts,'\">',ROUND(paid_amount, 0),'/',ROUND(payable_amounts, 0),'</td>'))))) AS payable_amounts_tr
+    from final group by member_id  order by member_id
 SQL;
 
 $result = $conn->query($sql);
