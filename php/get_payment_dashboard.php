@@ -121,3 +121,65 @@ $conn->close();
 
 
 
+// WITH
+//     pay_info AS(
+//     SELECT
+//         fp.finance_id,
+//         fp.collection_date,
+//         fp.member_id,
+//         fp.pay_amount,
+//         mp.paid_date,
+//         mp.is_paid,
+//         IFNULL(mp.paid_amount, 0) AS paid_amount,
+//         mp.payment_mode,
+//         mp.created_at,
+//         mp.emp_id
+//     FROM
+//         finance_payment fp
+//     LEFT JOIN memberspayment mp ON
+//         mp.member_id = fp.member_id AND IF(
+//             mp.paid_date <= fp.collection_date,
+//             1,
+//             IF(
+//                 (
+//                 SELECT
+//                     MAX(
+//                         finance_payment.collection_date
+//                     )
+//                 FROM
+//                     finance_payment
+//                 WHERE
+//                     finance_payment.member_id = 94
+//             ) = fp.collection_date,
+//             1,
+//             0
+//             )
+//         ) AND mp.paid_date > IFNULL(
+//             (
+//             SELECT
+//                 MAX(fp2.collection_date)
+//             FROM
+//                 finance_payment fp2
+//             WHERE
+//                 fp2.collection_date < fp.collection_date AND fp2.member_id = fp.member_id
+//         ),
+//         '0000-00-00'
+//         )
+//     WHERE
+//         fp.member_id = 94
+//     ORDER BY
+//         fp.collection_date
+// )
+// SELECT
+//     pay_info.*,
+//        SUM(pay_amount) OVER (
+//         ORDER BY collection_date
+//         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+//     ) AS pay_amount_total_till_date,
+//          SUM(paid_amount) OVER (
+//         ORDER BY collection_date
+//         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+//     ) AS paid_amount_total_till_date
+// FROM
+//     pay_info   
+  
