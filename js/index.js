@@ -659,7 +659,7 @@ $('#report_entry_tbl_body').empty()
      count = count + 1;
     //    $('#report_tbl').append("<tr><td>"+count+"</td><td>"+obj.collection_date+"</td><td>"+obj.expected_amount+"</td><td>"+obj.total_paid+"</td><td>"+obj.pending_balance+"</td><td>"+obj.amount_to_pay+"</td><td>"+obj.available_advance+"</td><td>"+obj.sts+"</td><td>"+obj.his_html+"</td></tr>")
        var td_report1 = "<th scope ='col'>Date</th>";
-       var td_entry_date = "<th colspan='2'>"+obj.group_number+"-("+obj.time_period+" weeks) -"+obj.collection_day+"</th>";
+       var td_entry_date = "<th colspan='3'>"+obj.group_number+"-("+obj.time_period+" weeks) -"+obj.collection_day+"</th>";
 if(count == 1)
 {
 var dueDatesArray = obj.due_dates.split(","); // Convert to array

@@ -141,6 +141,8 @@ WITH
         mp.payment_mode,
         mp.created_at,
         mp.emp_id,
+        IFNULL(SUM(pay_amount),
+        0) AS tot_emi,
         IFNULL(SUM(paid_amount),
         0) AS paid_amount
     FROM
@@ -185,6 +187,7 @@ WITH
 sum_table AS(
     SELECT
         pay_info.*,
+
         SUM(pay_amount) OVER(
            PARTITION BY member_id
         ORDER BY
@@ -246,7 +249,7 @@ SELECT
         sum_table.paid_amount_total_pre_date,
         0
     )  AS payable_amounts,
- 
+  
 
     
     (SELECT user_name FROM members WHERE members.id = sum_table.member_id) AS member_name,
@@ -269,7 +272,8 @@ SELECT
     member_id,
     tr(group_concat(concat('<th scope=\"col\">',collection_date,'</th>'))) AS due_dates_tr,
     tr(concat('<th scope=\"col\">',ifnull(member_name,''),'</th>',(group_concat(concat('<td class=\"',sts,'\">',ROUND(paid_amount, 0),'/',ROUND(payable_amounts, 0),'</td>'))))) AS payable_amounts_tr,
-    tr(concat('<th scope=\"col\">',ifnull(member_name,''),'</th>','<th scope=\"col\">',ifnull(nominee_name,''),'</th>',group_concat(concat('<td>',ROUND(pay_amount, 0),'</td>')))) AS payable_amounts_entry_tr,
+    tr(concat('<th scope=\"col\">',ifnull(member_name,''),'</th>','<th scope=\"col\">',ifnull(nominee_name,''),'</th>',
+    '<th scope=\"col\">',sum(tot_emi),'</th>',group_concat(concat('<td>',ROUND(pay_amount, 0),'</td>')))) AS payable_amounts_entry_tr,
     tr(concat('<th scope=\"col\">',ifnull(member_phone,''),'</th>','<th scope=\"col\">',ifnull(nominee_phone,''),'</th>',group_concat(concat('<td></td>')))) AS payable_amounts_entry__emp_tr
     from final group by member_id  order by member_id
 SQL;
