@@ -27,7 +27,7 @@ $(web_addr).parent().parent().find("a").eq(0).toggleClass('active')
     }
  );
 
-
+ $("#download_report_entry").hide();
 
      check_login();
     
@@ -169,6 +169,37 @@ $("#download_report").click(function () {
   });
 });
 
+
+
+$("#download_report_entry").click(function () {
+  $("#report_entry_tbl").table2excel({
+    filename:  $("#team_select").find("option:selected").text() + "_Entry Sheet" +  ".xls", // File name
+    name: "Report"          // Sheet name
+  });
+});
+
+
+$("#toggle_report").on("change", function(event) {
+console.log($(this).prop("checked"));
+
+
+
+  // TODO: handle click here
+  if($(this).prop("checked")) {
+    $("#report_full_div").addClass("d-none")
+    $("#report_entry_div").removeClass("d-none")
+
+$("#download_report").toggle();
+$("#download_report_entry").toggle();
+  }
+  else {
+    $("#report_full_div").removeClass("d-none")
+    $("#report_entry_div").addClass("d-none")
+
+$("#download_report").toggle();
+$("#download_report_entry").toggle();
+  }
+});
 
 });
 
@@ -600,6 +631,8 @@ $('#report_tbl').empty()
    {
     
    $("#title_tbl").text($("#team_select").find("option:selected").text() + " - Payment Dashboard")
+   $("#title_tbl_entry").text($("#team_select").find("option:selected").text() + " - Payment Dashboard")
+
    $.ajax({
      url: "php/get_payment_dashboard_all.php",
      type: "get", //send it through get method
@@ -612,6 +645,8 @@ mem_query  : "1"
      success: function (response) {
 $('#report_all_tbl').empty()
 $('#report_all_head').empty()
+$('#report_entry_head').empty()
+$('#report_entry_tbl_body').empty()
        console.log(response);
    var count = 0;
     if (response.trim() != "error") {
@@ -624,19 +659,27 @@ $('#report_all_head').empty()
      count = count + 1;
     //    $('#report_tbl').append("<tr><td>"+count+"</td><td>"+obj.collection_date+"</td><td>"+obj.expected_amount+"</td><td>"+obj.total_paid+"</td><td>"+obj.pending_balance+"</td><td>"+obj.amount_to_pay+"</td><td>"+obj.available_advance+"</td><td>"+obj.sts+"</td><td>"+obj.his_html+"</td></tr>")
        var td_report1 = "<th scope ='col'>Date</th>";
+       var td_entry_date = "<th colspan='2'>"+obj.group_number+"-("+obj.time_period+" weeks) -"+obj.collection_day+"</th>";
 if(count == 1)
 {
 var dueDatesArray = obj.due_dates.split(","); // Convert to array
 
 dueDatesArray.forEach(function(item) {
   td_report1 = td_report1 + "<th scope='col'>" + item + "</th>";
+  td_entry_date = td_entry_date + "<th scope='col'>" + item + "</th>";
 });
  $('#report_all_head').append("<tr>" + td_report1 +"</tr>")
+ $('#report_entry_head').append("<tr>" + td_entry_date +"</tr>")
+
+
 }
 
 
 
 $('#report_all_tbl').append(obj.payable_amounts_tr)
+$('#report_entry_tbl_body').append(obj.payable_amounts_entry_tr)
+$('#report_entry_tbl_body').append(obj.payable_amounts_entry__emp_tr)
+
 
        });
    

@@ -249,16 +249,28 @@ SELECT
  
 
     
-    (SELECT user_name FROM members WHERE members.id = sum_table.member_id) AS member_name
+    (SELECT user_name FROM members WHERE members.id = sum_table.member_id) AS member_name,
+    (SELECT phone FROM members WHERE members.id = sum_table.member_id) AS member_phone,
+    (SELECT nominee_name FROM members WHERE members.id = sum_table.member_id) AS nominee_name,
+    (SELECT nominee_phone FROM members WHERE members.id = sum_table.member_id) AS nominee_phone
 FROM
     sum_table ) 
 SELECT
-   member_name, 
+(select collection_day from group_finance_collections where id = $team_id limit 1) as collection_day,
+
+(select group_number from group_finance_collections where id = $team_id limit 1) as group_number,
+(select time_period from group_finance_collections where id = $team_id limit 1) as time_period,
+   member_name,
+    member_phone,
+    nominee_name,
+    nominee_phone, 
    group_concat(date_only(collection_date)) AS due_dates,  
    group_concat(payable_amounts) AS payable_amounts ,
     member_id,
     tr(group_concat(concat('<th scope=\"col\">',collection_date,'</th>'))) AS due_dates_tr,
-    tr(concat('<th scope=\"col\">',member_name,'</th>',(group_concat(concat('<td class=\"',sts,'\">',ROUND(paid_amount, 0),'/',ROUND(payable_amounts, 0),'</td>'))))) AS payable_amounts_tr
+    tr(concat('<th scope=\"col\">',ifnull(member_name,''),'</th>',(group_concat(concat('<td class=\"',sts,'\">',ROUND(paid_amount, 0),'/',ROUND(payable_amounts, 0),'</td>'))))) AS payable_amounts_tr,
+    tr(concat('<th scope=\"col\">',ifnull(member_name,''),'</th>','<th scope=\"col\">',ifnull(nominee_name,''),'</th>',group_concat(concat('<td>',ROUND(pay_amount, 0),'</td>')))) AS payable_amounts_entry_tr,
+    tr(concat('<th scope=\"col\">',ifnull(member_phone,''),'</th>','<th scope=\"col\">',ifnull(nominee_phone,''),'</th>',group_concat(concat('<td></td>')))) AS payable_amounts_entry__emp_tr
     from final group by member_id  order by member_id
 SQL;
 
