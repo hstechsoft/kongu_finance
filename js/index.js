@@ -63,6 +63,7 @@ $("#member_select").on("change", function(event) {
    $("#group_txt").closest(".card-header").addClass("text-bg-success")
 
     get_payment_dashboard($(this).val());
+  get_emi_table($('#team_select').val())
 
 if($(this).val() == "all")
 {
