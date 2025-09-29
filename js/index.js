@@ -181,7 +181,7 @@ $("#download_report_entry").click(function () {
 
 
 $("#toggle_report").on("change", function(event) {
-console.log($(this).prop("checked"));
+
 
 
 
@@ -202,7 +202,67 @@ $("#download_report_entry").toggle();
   }
 });
 
+
+
+
+$("#pdf_button").on("click", function(event) {
+  event.preventDefault();
+  // TODO: handle click here
+
+  const printContent = $("#report_entry_tbl").prop("outerHTML");
+
+  const printWindow = window.open('', '', 'width=1200,height=900');
+
+  // Copy all <link> and <style> tags from current document
+  $('link[rel="stylesheet"], style').each(function () {
+    printWindow.document.write(this.outerHTML);
+  });
+
+  // Force A4 Landscape
+  printWindow.document.write('<style>@page { size: A4 landscape; margin: 10mm; }</style>');
+
+  // Write the content to print
+  printWindow.document.write('<body>');
+  printWindow.document.write(printContent);
+  printWindow.document.write('</body>');
+
+  printWindow.document.close();
+  printWindow.focus();
+
+  // Wait a bit to ensure styles are applied, then print
+  setTimeout(function () {
+    printWindow.print();
+
+    // Fallback close: close after 1s even if onafterprint doesn't fire
+    const closeTimer = setTimeout(() => {
+      if (!printWindow.closed) printWindow.close();
+    }, 1000);
+
+    // Try to use onafterprint if supported
+    printWindow.onafterprint = () => {
+      clearTimeout(closeTimer);
+      printWindow.close();
+    };
+  }, 300);
 });
+
+
+
+});
+
+function getInlineStyles(el) {
+  // Copy computed styles into inline style
+  const computed = window.getComputedStyle(el);
+  let inlineStyle = "";
+  for (let i = 0; i < computed.length; i++) {
+    const prop = computed[i];
+    inlineStyle += `${prop}:${computed.getPropertyValue(prop)};`;
+  }
+  el.setAttribute("style", inlineStyle);
+  for (const child of el.children) {
+    getInlineStyles(child);
+  }
+}
 
   function get_collection_data(team_id)
    {
@@ -219,7 +279,7 @@ $("#download_report_entry").toggle();
    
    $('#collection_date').empty()
    $('#collection_date').append("<option selected disabled value=''>Choose...</option>")
-   console.log(response);
+ 
    if (response.trim() != "error") {
 
     if (response.trim() != "0 result")
@@ -358,10 +418,10 @@ $('#hs_loader').addClass('d-none');
 $('#employee').append("<option value = '"+obj.id+"'>"+obj.employee_name+"</option>")
 cur_date = obj.cur_date
      });
-   console.log(cur_date);
+
    
     $("#paid_date").val(cur_date)
-    console.log( $("#paid_date").val());
+   
     
    }
    else{
@@ -398,7 +458,7 @@ cur_date = obj.cur_date
      team_id : team_id
      },
      success: function (response) {
-   console.log(response);
+
    
    $('#member_select').empty()
    $('#member_select').append("<option value='' disabled selected>Select Member</option>")
@@ -463,7 +523,7 @@ $('#member_select').append("<option value='"+obj.id+"'>"+obj.member+"</option>")
 
      },
      success: function (response) {
-   console.log(response);
+
    $('#group_pay_table').empty()
    
    if (response.trim() != "error") {
@@ -526,7 +586,7 @@ $('#group_pay_table').append("<tr data-mem_id='"+obj.member_id+"'><td><div style
      
      },
      success: function (response) {
-   console.log(response);
+
    
    
    if (response.trim() != "error") {
@@ -585,7 +645,7 @@ team_id : mem_id,
      },
      success: function (response) {
 $('#report_tbl').empty()
-       console.log(response);
+       
    var count = 0;
     if (response.trim() != "error") {
        var obj = JSON.parse(response);
@@ -648,7 +708,7 @@ $('#report_all_tbl').empty()
 $('#report_all_head').empty()
 $('#report_entry_head').empty()
 $('#report_entry_tbl_body').empty()
-       console.log(response);
+    
    var count = 0;
     if (response.trim() != "error") {
        var obj = JSON.parse(response);
@@ -660,15 +720,25 @@ $('#report_entry_tbl_body').empty()
      count = count + 1;
     //    $('#report_tbl').append("<tr><td>"+count+"</td><td>"+obj.collection_date+"</td><td>"+obj.expected_amount+"</td><td>"+obj.total_paid+"</td><td>"+obj.pending_balance+"</td><td>"+obj.amount_to_pay+"</td><td>"+obj.available_advance+"</td><td>"+obj.sts+"</td><td>"+obj.his_html+"</td></tr>")
        var td_report1 = "<th scope ='col'>Date</th>";
-       var td_entry_date = "<th colspan='3'>"+obj.group_number+"-("+obj.time_period+" weeks) -"+obj.collection_day+"</th>";
+       var td_entry_date = "<th colspan='3' >"+obj.group_number+"-("+obj.time_period+" weeks) -"+obj.collection_day+"</th>";
 if(count == 1)
 {
 var dueDatesArray = obj.due_dates.split(","); // Convert to array
+var emp_name_list = obj.emp_name_list.split(","); // Convert to array
 
+  console.log(emp_name_list);
+
+  console.log();
+  
+var emp_count = 0;
+  
 dueDatesArray.forEach(function(item) {
-  td_report1 = td_report1 + "<th scope='col'>" + item + "</th>";
-  td_entry_date = td_entry_date + "<th scope='col'>" + item + "</th>";
+  td_report1 = td_report1 + "<td scope='col' class='small' >" + item + "</td>";
+  td_entry_date = td_entry_date + "<td scope='col' class=' small '><div  class = 'd-flex justify-content-center g-1'><p  style='max-width: 25px;' class='vertical-text m-0 p-0 '>" + (item || '') + "</p><p  style='max-width: 25px;' class = 'vertical-text m-0 p-0'>" + (emp_name_list[emp_count] || '') + "</p></div></td>";
+  emp_count = emp_count + 1;
 });
+  td_entry_date = td_entry_date + "<td scope='col' class='small'>Summary</td>";
+
  $('#report_all_head').append("<tr>" + td_report1 +"</tr>")
  $('#report_entry_head').append("<tr>" + td_entry_date +"</tr>")
 
@@ -746,7 +816,7 @@ function get_current_userid_byphoneid()
        var obj = JSON.parse(response);
       
 
-      console.log(response);
+    
       
       
        obj.forEach(function (obj) {
@@ -807,7 +877,7 @@ function get_current_userid_byphoneid()
     var hour = date.getHours();
     var mins = date.getMinutes();
   
-console.log(mins)
+
 
     if (month < 10) month = "0" + month;
     if (day < 10) day = "0" + day;

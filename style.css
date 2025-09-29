@@ -1,3 +1,9 @@
+.vertical-text {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  white-space: nowrap;
+}
+
 /* Full page overlay */
 #hs_loader {
   position: fixed;
