@@ -259,8 +259,8 @@
 
 </body>
 </html>
-
-<!-- WITH RECURSIVE date_series AS (
+<!-- 
+WITH RECURSIVE date_series AS (
     SELECT DATE((SELECT gfc.start_date from group_finance_collections gfc WHERE gfc.id = 59)) AS generated_date, 1 AS cnt
     UNION ALL
     SELECT DATE_ADD(generated_date, INTERVAL 7 DAY), cnt + 1
@@ -268,3 +268,232 @@
     WHERE cnt < 40  -- frequency (number of dates)
 )
 SELECT mem.id,mem.user_name,mem.teamid ,d.generated_date from members  mem CROSS JOIN date_series d WHERE mem.teamid = 59 -->
+
+<!-- WITH RECURSIVE
+    date_series AS(
+    SELECT
+        DATE(
+            (
+            SELECT
+                gfc.start_date
+            FROM
+                group_finance_collections gfc
+            WHERE
+                gfc.id = 59
+        )
+        ) AS generated_date,
+        1 AS cnt
+    UNION ALL
+SELECT
+    DATE_ADD(generated_date, INTERVAL 7 DAY),
+    cnt + 1
+FROM
+    date_series
+WHERE
+    cnt < 30 -- frequency (number of dates)
+),
+fp AS(
+    SELECT
+        mem.id AS member_id,
+        mem.user_name,
+        mem.teamid AS group_id,
+        d.generated_date AS collection_date
+    FROM
+        members mem
+    CROSS JOIN date_series d WHERE
+        mem.teamid = 59
+),
+details AS(
+    SELECT
+        fp.*,
+        mp.paid_date,
+        IFNULL(SUM(mp.paid_amount),
+        0) AS paid_total,
+        mp.emp_id,
+        IFNULL(
+            (
+            SELECT
+                employees.employee_name
+            FROM
+                employees
+            WHERE
+                employees.id = mp.emp_id
+        ),
+        ''
+        ) AS emp_name
+    FROM
+        fp
+    LEFT JOIN memberspayment mp ON
+        mp.member_id = fp.member_id AND IF(
+            mp.paid_date <= fp.collection_date,
+            1,
+            IF(
+                (
+                SELECT
+                    MAX(fp1.collection_date)
+                FROM
+                    fp fp1
+                WHERE
+                    fp1.member_id = fp.member_id
+            ) = fp.collection_date,
+            1,
+            0
+            )
+        ) AND mp.paid_date > IFNULL(
+            (
+            SELECT
+                MAX(fp2.collection_date)
+            FROM
+                fp fp2
+            WHERE
+                fp2.collection_date < fp.collection_date AND fp2.member_id = fp.member_id
+        ),
+        '0000-00-00'
+        )
+    WHERE
+        1
+    GROUP BY
+        collection_date,
+        fp.member_id
+    ORDER BY
+        fp.member_id,
+        fp.collection_date
+)
+SELECT
+    sum(paid_total) as group_total,
+    
+(select group_number from group_finance_collections where id = group_id limit 1) as group_number,
+(select collection_day from group_finance_collections where id = group_id limit 1) as collection_day,
+    collection_date,
+    concat(GROUP_CONCAT(concat(user_name,if(paid_total = 0,'',paid_total)) SEPARATOR '\n') ) as group_details,
+    emp_name
+FROM
+    details
+GROUP BY
+    collection_date -->
+
+
+    <!-- sum(paid_total) as group_total,
+    
+    (select group_number from group_finance_collections where id = group_id limit 1) as group_number,
+    (select collection_day from group_finance_collections where id = group_id limit 1) as collection_day,
+        collection_date,
+        concat(GROUP_CONCAT(concat(member_id,if(paid_total = 0,'',paid_total)) SEPARATOR '\n') ) as group_details,
+         concat(GROUP_CONCAT(concat(member_id) SEPARATOR '\n') ) as member_details,
+        emp_name,
+        CEIL(ROW_NUMBER() OVER (order by collection_date) / 4) AS row_no
+    FROM
+        details
+    GROUP BY
+        collection_date order by member_id,collection_date ASC -->
+
+
+
+
+
+
+
+
+        WITH RECURSIVE
+    date_series AS(
+    SELECT
+        DATE(
+            (
+            SELECT
+                gfc.start_date
+            FROM
+                group_finance_collections gfc
+            WHERE
+                gfc.id = 59
+        )
+        ) AS generated_date,
+        1 AS cnt
+    UNION ALL
+SELECT
+    DATE_ADD(generated_date, INTERVAL 7 DAY),
+    cnt + 1
+FROM
+    date_series
+WHERE
+    cnt < 30 -- frequency (number of dates)
+),
+fp AS(
+    SELECT
+        mem.id AS member_id,
+        mem.user_name,
+        mem.teamid AS group_id,
+        d.generated_date AS collection_date
+    FROM
+        members mem
+    CROSS JOIN date_series d WHERE
+        mem.teamid = 59
+),
+details AS(
+    SELECT
+        fp.*,
+        mp.paid_date,
+        IFNULL(SUM(mp.paid_amount),
+        0) AS paid_total,
+        mp.emp_id,
+        IFNULL(
+            (
+            SELECT
+                employees.employee_name
+            FROM
+                employees
+            WHERE
+                employees.id = mp.emp_id
+        ),
+        ''
+        ) AS emp_name
+    FROM
+        fp
+    LEFT JOIN memberspayment mp ON
+        mp.member_id = fp.member_id AND IF(
+            mp.paid_date <= fp.collection_date,
+            1,
+            IF(
+                (
+                SELECT
+                    MAX(fp1.collection_date)
+                FROM
+                    fp fp1
+                WHERE
+                    fp1.member_id = fp.member_id
+            ) = fp.collection_date,
+            1,
+            0
+            )
+        ) AND mp.paid_date > IFNULL(
+            (
+            SELECT
+                MAX(fp2.collection_date)
+            FROM
+                fp fp2
+            WHERE
+                fp2.collection_date < fp.collection_date AND fp2.member_id = fp.member_id
+        ),
+        '0000-00-00'
+        )
+    WHERE
+        1
+    GROUP BY
+        collection_date,
+        fp.member_id
+    ORDER BY
+        fp.member_id,
+        fp.collection_date
+)
+SELECT
+    details.*,
+    ifnull(sum(paid_total),'') as paid_total,
+     
+         concat(GROUP_CONCAT(concat(user_name) ORDER BY member_id  SEPARATOR '\n') ) as member_details,
+           concat(GROUP_CONCAT(concat(if(paid_total = 0,'',paid_total)) ORDER BY member_id  SEPARATOR '\n') ) as pay_details,
+ 
+       CEIL(ROW_NUMBER() OVER () / 4) AS row_no
+FROM
+    details
+GROUP BY
+    
+    collection_date
