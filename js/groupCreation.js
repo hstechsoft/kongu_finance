@@ -72,7 +72,7 @@ $("#groupTable").on("click", "tr td button", function(event) {
   {
 get_group_finance_collections_single(group_id)
   }
-  else
+  else  if($(this).hasClass("delete"))
   {
 
     
@@ -103,6 +103,11 @@ get_group_finance_collections_single(group_id)
         }
       })
       }
+  }
+
+
+  else{
+   
   }
 });
 

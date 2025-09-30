@@ -46,6 +46,8 @@
 </section>
 
 <!-- content -->
+ 
+
   <div class="container mt-5">
         <h3 class="text-center mb-4">Group Finance Collection</h3>
 
@@ -216,6 +218,7 @@
                     <th>Day</th>
                    
                     <th>Actions</th>
+                     <th>Print</th>
                 </tr>
             </thead>
             <tbody  id="groupTable">
@@ -223,6 +226,10 @@
             </tbody>
         </table>
     </div>
+
+  <div id="print_collection_sheet">
+
+  </div>
 </div>
 
    
@@ -252,3 +259,12 @@
 
 </body>
 </html>
+
+<!-- WITH RECURSIVE date_series AS (
+    SELECT DATE((SELECT gfc.start_date from group_finance_collections gfc WHERE gfc.id = 59)) AS generated_date, 1 AS cnt
+    UNION ALL
+    SELECT DATE_ADD(generated_date, INTERVAL 7 DAY), cnt + 1
+    FROM date_series
+    WHERE cnt < 40  -- frequency (number of dates)
+)
+SELECT mem.id,mem.user_name,mem.teamid ,d.generated_date from members  mem CROSS JOIN date_series d WHERE mem.teamid = 59 -->

@@ -281,7 +281,7 @@ SELECT
     -- '<th scope=\"col\">',sum(tot_emi),'</th>',group_concat(concat('<td>',ROUND(pay_amount, 0),'</td>')))) AS payable_amounts_entry_tr,
 
     
-    tr(concat('<td scope=\"col\">',ifnull(member_name,''),'</td>','<td scope=\"col\">',ifnull(nominee_name,''),'</td>',
+    tr(concat('<td></td><td scope=\"col\">',ifnull(concat('<p class=\"m-0 p-0 small\">',member_name,'</p><p class=\"m-0 p-0 small\">',member_phone,'</p>'),''),'</td>','<td scope=\"col\">',ifnull(concat('<p class=\"m-0 p-0 small\">',nominee_name,'</p><p class=\"m-0 p-0 small\">',nominee_phone,'</p>'),''),'</td>',
     '<th scope=\"col\">',ROUND(sum(tot_emi), 0),'</th>',group_concat(concat('<td>',if(paid_amount = 0,'',ROUND(paid_amount, 0)),'</td>')), '<td scope=\"col\">',ROUND(sum(tot_emi)-sum(paid_amount), 0),'</td>')) AS payable_amounts_entry_tr,
 
     -- tr(concat('<th scope=\"col\">',ifnull(member_phone,''),'</th>','<th scope=\"col\">',ifnull(nominee_phone,''),'</th>',   '<th scope=\"col\">',sum(tot_emi)-sum(paid_amount),'</th>',group_concat(concat('<td>',if(paid_amount = 0,'',paid_amount),'</td>')))) AS 

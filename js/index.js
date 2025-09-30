@@ -7,6 +7,8 @@ var current_user_name =  localStorage.getItem("ls_uname") ;
  
 $(document).ready(function(){
  $("#individual_div").hide()
+
+ $("#con").printThis()
   
   $("#menu_bar").load('menu.html',
     function() { 
@@ -219,7 +221,7 @@ $("#pdf_button").on("click", function(event) {
   });
 
   // Force A4 Landscape
-  printWindow.document.write('<style>@page { size: A4 landscape; margin: 10mm; }</style>');
+  printWindow.document.write('<style>@page { size: A4 landscape; margin: 1mm; }</style>');
 
   // Write the content to print
   printWindow.document.write('<body>');
@@ -720,7 +722,7 @@ $('#report_entry_tbl_body').empty()
      count = count + 1;
     //    $('#report_tbl').append("<tr><td>"+count+"</td><td>"+obj.collection_date+"</td><td>"+obj.expected_amount+"</td><td>"+obj.total_paid+"</td><td>"+obj.pending_balance+"</td><td>"+obj.amount_to_pay+"</td><td>"+obj.available_advance+"</td><td>"+obj.sts+"</td><td>"+obj.his_html+"</td></tr>")
        var td_report1 = "<th scope ='col'>Date</th>";
-       var td_entry_date = "<th colspan='3' >"+obj.group_number+"-("+obj.time_period+" weeks) -"+obj.collection_day+"</th>";
+       var td_entry_date = "<th colspan='4' >"+obj.group_number+"-("+obj.time_period+" weeks) -"+obj.collection_day+"</th>";
 if(count == 1)
 {
 var dueDatesArray = obj.due_dates.split(","); // Convert to array
@@ -734,7 +736,7 @@ var emp_count = 0;
   
 dueDatesArray.forEach(function(item) {
   td_report1 = td_report1 + "<td scope='col' class='small' >" + item + "</td>";
-  td_entry_date = td_entry_date + "<td scope='col' class=' small '><div  class = 'd-flex justify-content-center g-1'><p  style='max-width: 25px;' class='vertical-text m-0 p-0 '>" + (item || '') + "</p><p  style='max-width: 25px;' class = 'vertical-text m-0 p-0'>" + (emp_name_list[emp_count] || '') + "</p></div></td>";
+  td_entry_date = td_entry_date + "<td scope='col' class=' small '><div  class = 'd-flex justify-content-center g-1'><p   class='vertical-text m-0 p-0 '>" + (item || '') + "</p><p  class = 'vertical-text m-0 p-0'>" + (emp_name_list[emp_count] || '') + "</p></div></td>";
   emp_count = emp_count + 1;
 });
   td_entry_date = td_entry_date + "<td scope='col' class='small'>Summary</td>";
@@ -749,7 +751,8 @@ dueDatesArray.forEach(function(item) {
 
 $('#report_all_tbl').append(obj.payable_amounts_tr)
 $('#report_entry_tbl_body').append(obj.payable_amounts_entry_tr)
-$('#report_entry_tbl_body').append(obj.payable_amounts_entry__emp_tr)
+$('#report_entry_tbl_body tr:last').find('td').eq(0).text(count)
+// $('#report_entry_tbl_body').append(obj.payable_amounts_entry__emp_tr)
 
 
        });
